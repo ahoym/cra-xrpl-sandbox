@@ -1,3 +1,23 @@
+# Create-react-app + XRPL sandbox
+
+Putting the typescript XRPL client, [`ripple-lib`](https://github.com/ripple/ripple-lib), in a CRA app so it can be sandboxed and experimented with easily. Developers can:
+
+1. `git clone https://github.com/ahoym/cra-xrpl-sandbox.git`
+2. `cd cra-xrpl-sandbox`
+3. `yarn install`
+4. `yarn start`
+
+And play around with the library in the browser web console + enjoy auto updates to the TS file(s).
+
+See the `xrpl` reference documentation for more details: https://xrpl.org/rippleapi-reference.html
+
+## Recommended Tooling/Setup ##
+
+- [Get `nvm`](https://github.com/nvm-sh/nvm#installing-and-updating) for node version management
+- [Get `homebrew`](https://brew.sh/) for macOS package management
+- [Get and use `yarn`](https://classic.yarnpkg.com/en/docs/install/#homebrew) instead of `npm`
+  - `brew install yarn`
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
