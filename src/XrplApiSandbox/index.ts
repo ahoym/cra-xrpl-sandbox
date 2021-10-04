@@ -137,10 +137,6 @@ export class RippleAPIClient {
 export const xrplClient = new RippleAPIClient({
   server: 'wss://s.altnet.rippletest.net:51233',
 });
-xrplClient
-  .generateFaucetWallet()
-  .then(() => xrplClient.sendPayment(22, 'rUCzEr6jrEyMpjhs4wSdQdz4g8Y382NxfM'))
-  .then((txId) => console.log(txId));
 
 // Place RippleAPI on the window so developers can experiment with
 // it in the web console

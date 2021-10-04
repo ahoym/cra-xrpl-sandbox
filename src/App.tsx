@@ -1,6 +1,12 @@
 import './App.css';
 import logo from './logo.svg';
-import { RippleAPIClient, xrplClient } from './XrplApiSandbox';
+import { xrplClient } from './XrplApiSandbox';
+
+xrplClient
+  .generateFaucetWallet()
+  .then(xrplClient.logAndPass)
+  .then(() => xrplClient.sendPayment(22, 'rUCzEr6jrEyMpjhs4wSdQdz4g8Y382NxfM'))
+  .then(xrplClient.logAndPass);
 
 function App() {
   return (
