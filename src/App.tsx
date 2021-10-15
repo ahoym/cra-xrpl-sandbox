@@ -1,28 +1,77 @@
+import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
 import { generateTestnetXrplClient, xrplClient } from './XrplApiSandbox';
-import { logMessageAndPass } from './XrplApiSandbox/utilities';
 
 const clientOne = xrplClient;
 const clientTwo = generateTestnetXrplClient();
 
-const generateWalletRequestOne = clientOne
-  .generateFaucetWallet()
-  .then(logMessageAndPass('Created faucet wallet for Client 1'));
-
-const generateWalletRequestTwo = clientTwo
-  .generateFaucetWallet()
-  .then(logMessageAndPass('Created faucet wallet for Client 2'));
-
-Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
-  .then(() => clientOne.sendPayment(22, clientTwo.wallet()?.account.address!))
-  .then(logMessageAndPass('Sent transaction from Wallet 1 to Wallet 2'));
+// Generate testnet wallets
+const generateWalletRequestOne = clientOne.generateFaucetWallet();
+const generateWalletRequestTwo = clientTwo.generateFaucetWallet();
 
 function App() {
+  const [logs, setLogs] = useState<unknown[]>([]);
+
+  useEffect(() => {
+    generateWalletRequestOne.then((result) => {
+      setLogs((logState) => [
+        result,
+        'Created faucet wallet for Client 1',
+        ...logState,
+      ]);
+    });
+  }, []);
+
+  useEffect(() => {
+    generateWalletRequestTwo.then((result) => {
+      setLogs((logState) => [
+        result,
+        'Created faucet wallet for Client 2',
+        ...logState,
+      ]);
+    });
+  }, []);
+
+  useEffect(() => {
+    // After testnet wallet creations, send a 22 XRP payment
+    Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
+      .then(() =>
+        clientOne.sendPayment(22, clientTwo.wallet()?.account.address!)
+      )
+      .then((result) => {
+        setLogs((logState) => [
+          result,
+          'Sent transaction from Wallet 1 to Wallet 2',
+          ...logState,
+        ]);
+      });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+
+        <div className="App-logs">
+          {logs.map((log) => {
+            if (typeof log === 'string') {
+              return (
+                <p key={Math.random()} className="App-console-log">
+                  {log}
+                </p>
+              );
+            } else if (typeof log === 'object') {
+              return (
+                <div key={Math.random()}>
+                  <pre>{JSON.stringify(log, null, 2)}</pre>
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
