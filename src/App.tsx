@@ -3,6 +3,9 @@ import './App.css';
 import logo from './logo.svg';
 import { generateTestnetXrplClient, xrplClient } from './XrplApiSandbox';
 
+// Can import and run TS scripts this way if so desired
+// import './XrplApiSandbox/scripts/sendXrp';
+
 const clientOne = xrplClient;
 const clientTwo = generateTestnetXrplClient();
 
