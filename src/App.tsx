@@ -1,12 +1,22 @@
 import './App.css';
 import logo from './logo.svg';
-import { xrplClient } from './XrplApiSandbox';
+import { generateTestnetXrplClient, xrplClient } from './XrplApiSandbox';
+import { logMessageAndPass } from './XrplApiSandbox/utilities';
 
-xrplClient
+const clientOne = xrplClient;
+const clientTwo = generateTestnetXrplClient();
+
+const generateWalletRequestOne = clientOne
   .generateFaucetWallet()
-  .then(xrplClient.logAndPass)
-  .then(() => xrplClient.sendPayment(22, 'rUCzEr6jrEyMpjhs4wSdQdz4g8Y382NxfM'))
-  .then(xrplClient.logAndPass);
+  .then(logMessageAndPass('Created faucet wallet for Client 1'));
+
+const generateWalletRequestTwo = clientTwo
+  .generateFaucetWallet()
+  .then(logMessageAndPass('Created faucet wallet for Client 2'));
+
+Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
+  .then(() => clientOne.sendPayment(22, clientTwo.wallet()?.account.address!))
+  .then(logMessageAndPass('Sent transaction from Wallet 1 to Wallet 2'));
 
 function App() {
   return (

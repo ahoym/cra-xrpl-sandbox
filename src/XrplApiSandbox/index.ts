@@ -129,9 +129,13 @@ export class RippleAPIClient {
   };
 }
 
-export const xrplClient = new RippleAPIClient({
-  server: 'wss://s.altnet.rippletest.net:51233',
-});
+export function generateTestnetXrplClient() {
+  return new RippleAPIClient({
+    server: 'wss://s.altnet.rippletest.net:51233',
+  });
+}
+
+export const xrplClient = generateTestnetXrplClient();
 
 // Place RippleAPI on the window so developers can experiment with
 // it in the web console
