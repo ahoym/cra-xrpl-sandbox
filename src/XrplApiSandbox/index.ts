@@ -136,6 +136,7 @@ export function generateTestnetXrplClient() {
 }
 
 export const xrplClient = generateTestnetXrplClient();
+export const xrplClientTwo = generateTestnetXrplClient();
 
 // Place RippleAPI on the window so developers can experiment with
 // it in the web console
