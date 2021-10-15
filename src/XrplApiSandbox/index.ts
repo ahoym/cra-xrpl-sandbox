@@ -124,11 +124,6 @@ export class RippleAPIClient {
     return this.waitForTxValidation(submittedPayment.txId, maxLedgerVersion!);
   };
 
-  public logAndPass = (result: any) => {
-    console.log(result);
-    return result;
-  };
-
   public getTransaction = (txId: string) => {
     return this.#api.getTransaction(txId);
   };
