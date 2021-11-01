@@ -141,3 +141,4 @@ const publicRippleAPI = new RippleAPI({ server: TEST_NET });
 (window as any).RippleAPI = RippleAPI;
 (window as any).publicRippleAPI = publicRippleAPI;
 (window as any).xrplClient = xrplClient;
+(window as any).xrplClientTwo = xrplClientTwo;
