@@ -50,7 +50,7 @@ Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
     )
   )
   .then(() => {
-    return xrplClientTwo.finishEscrow(
+    return xrplClient.finishEscrow(
       xrplClient.wallet()?.account.address!,
       offerSequence
     );
