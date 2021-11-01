@@ -13,7 +13,7 @@ See the `xrpl` reference documentation for more details: https://xrpl.org/ripple
 
 ## Recommended Tooling/Setup ##
 
-- [Get `nvm`](https://github.com/nvm-sh/nvm#installing-and-updating) for node version management
+- [Get `volta`](https://volta.sh/) for node/yarn version management
 - [Get `homebrew`](https://brew.sh/) for macOS package management
 - [Get and use `yarn`](https://classic.yarnpkg.com/en/docs/install/#homebrew) instead of `npm`
   - `brew install yarn`
