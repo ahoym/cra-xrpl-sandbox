@@ -41,7 +41,7 @@ Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
   .then(
     (response: any) =>
       new Promise((resolve: any) =>
-        setTimeout(() => resolve(response, ESCROW_DELAY * 1000))
+        setTimeout(() => resolve(response), ESCROW_DELAY * 1000)
       )
   )
   .then(
