@@ -23,7 +23,7 @@ let offerSequence: number;
 Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
   .then(() =>
     xrplClient.createEscrow(
-      22,
+      50,
       xrplClientTwo.wallet()?.account.address!,
       RELEASE_DATE_IN_SECONDS
     )
