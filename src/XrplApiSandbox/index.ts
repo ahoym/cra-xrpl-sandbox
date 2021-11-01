@@ -3,6 +3,7 @@
 import { APIOptions, Instructions, RippleAPI } from 'ripple-lib';
 import { FaucetWallet } from 'ripple-lib/dist/npm/wallet/wallet-generation';
 
+const RIPPLE_EPOCH = 946684800;
 
 export class RippleAPIClient {
   #api: RippleAPI;
@@ -91,6 +92,121 @@ export class RippleAPIClient {
         }
       });
     });
+  };
+
+  public prepareEscrowCreate = (
+    xrpAmount: number,
+    destination: string,
+    releaseDateInSeconds: number,
+    instructions?: Instructions
+  ) => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
+    return this.connect().then(() =>
+      this.#api.prepareTransaction(
+        {
+          TransactionType: 'EscrowCreate',
+          Account: this.#wallet!.account.xAddress,
+          Amount: this.#api.xrpToDrops(xrpAmount),
+          Destination: destination,
+          FinishAfter: releaseDateInSeconds,
+        },
+        instructions
+      )
+    );
+  };
+
+  public createEscrow = async (
+    xrpAmount: number,
+    destination: string,
+    releaseDateInSeconds: number,
+    instructions?: Instructions
+  ) => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
+    const escrowReleaseDate = releaseDateInSeconds - RIPPLE_EPOCH;
+    let maxLedgerVersion: number;
+
+    const submittedEscrow = await this.prepareEscrowCreate(
+      xrpAmount,
+      destination,
+      escrowReleaseDate,
+      {
+        // Expire this transaction if it doesn't execute within ~5 minutes:
+        maxLedgerVersionOffset: 75,
+        ...instructions,
+      }
+    )
+      .then((preparedTx) => {
+        maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
+        return this.#api.sign(preparedTx.txJSON, this.#wallet!.account.secret);
+      })
+      .then(async (signed) => {
+        const earliestLedgerVersion = (await this.#api.getLedgerVersion()) + 1;
+        this.#api.submit(signed.signedTransaction);
+        return { txId: signed.id, earliestLedgerVersion };
+      });
+
+    return this.waitForTxValidation(submittedEscrow.txId, maxLedgerVersion!);
+  };
+
+  public prepareEscrowFinish = (
+    escrowOwner: string,
+    offerSequence: number,
+    instructions?: Instructions
+  ) => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
+    return this.connect().then(() =>
+      this.#api.prepareTransaction(
+        {
+          TransactionType: 'EscrowFinish',
+          Account: escrowOwner,
+          Owner: escrowOwner,
+          OfferSequence: offerSequence,
+        },
+        instructions
+      )
+    );
+  };
+
+  public finishEscrow = async (
+    escrowOwner: string,
+    offerSequence: number,
+    instructions?: Instructions
+  ) => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
+    let maxLedgerVersion: number;
+
+    const submittedEscrow = await this.prepareEscrowFinish(
+      escrowOwner,
+      offerSequence,
+      {
+        // Expire this transaction if it doesn't execute within ~5 minutes:
+        maxLedgerVersionOffset: 75,
+        ...instructions,
+      }
+    )
+      .then((preparedTx) => {
+        maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
+        return this.#api.sign(preparedTx.txJSON, this.#wallet!.account.secret);
+      })
+      .then(async (signed) => {
+        const earliestLedgerVersion = (await this.#api.getLedgerVersion()) + 1;
+        this.#api.submit(signed.signedTransaction);
+        return { txId: signed.id, earliestLedgerVersion };
+      });
+
+    return this.waitForTxValidation(submittedEscrow.txId, maxLedgerVersion!);
   };
 
   public sendPayment = async (

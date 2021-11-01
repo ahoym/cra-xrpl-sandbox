@@ -5,6 +5,7 @@ import { xrplClient, xrplClientTwo } from './XrplApiSandbox';
 
 // Can import and run TS scripts this way if so desired
 // import './XrplApiSandbox/scripts/sendXrp';
+// import './XrplApiSandbox/scripts/sendEscrow';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient.generateFaucetWallet();
