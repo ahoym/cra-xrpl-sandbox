@@ -3,9 +3,6 @@
 import { APIOptions, Instructions, RippleAPI } from 'ripple-lib';
 import { FaucetWallet } from 'ripple-lib/dist/npm/wallet/wallet-generation';
 
-const publicRippleAPI = new RippleAPI({
-  server: 'wss://s.altnet.rippletest.net:51233', // Testnet
-});
 
 export class RippleAPIClient {
   #api: RippleAPI;
@@ -129,14 +126,15 @@ export class RippleAPIClient {
   };
 }
 
+const TEST_NET = 'wss://s.altnet.rippletest.net:51233';
+
 export function generateTestnetXrplClient() {
-  return new RippleAPIClient({
-    server: 'wss://s.altnet.rippletest.net:51233',
-  });
+  return new RippleAPIClient({ server: TEST_NET });
 }
 
 export const xrplClient = generateTestnetXrplClient();
 export const xrplClientTwo = generateTestnetXrplClient();
+const publicRippleAPI = new RippleAPI({ server: TEST_NET });
 
 // Place RippleAPI on the window so developers can experiment with
 // it in the web console
