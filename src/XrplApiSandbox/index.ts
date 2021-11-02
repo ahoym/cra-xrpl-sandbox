@@ -27,6 +27,15 @@ export class RippleAPIClient {
   public api = () => this.#api;
   public wallet = () => this.#wallet;
 
+  public connectAndGetWallet = async () => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
+    await this.connect();
+    return this.#wallet;
+  };
+
   public getAccountInfo = () => {
     if (this.#wallet === null) {
       throw new Error('Input wallet credentials or instantiate a new one.');
@@ -49,62 +58,50 @@ export class RippleAPIClient {
       });
   };
 
-  public preparePayment = (
+  public preparePayment = async (
     xrpAmount: number,
     destination: string,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
+    const wallet = await this.connectAndGetWallet();
 
-    return this.connect().then(() =>
-      this.#api.prepareTransaction(
-        {
-          TransactionType: 'Payment',
-          Account: this.#wallet!.account.xAddress,
-          Amount: this.#api.xrpToDrops(xrpAmount),
-          Destination: destination,
-        },
-        instructions
-      )
+    return this.#api.prepareTransaction(
+      {
+        TransactionType: 'Payment',
+        Account: wallet.account.xAddress,
+        Amount: this.#api.xrpToDrops(xrpAmount),
+        Destination: destination,
+      },
+      instructions
     );
   };
 
-  public prepareEscrowCreate = (
+  public prepareEscrowCreate = async (
     xrpAmount: number,
     destination: string,
     releaseDateInSeconds: number,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
+    const wallet = await this.connectAndGetWallet();
 
-    return this.connect().then(() =>
-      this.#api.prepareTransaction(
-        {
-          TransactionType: 'EscrowCreate',
-          Account: this.#wallet!.account.xAddress,
-          Amount: this.#api.xrpToDrops(xrpAmount),
-          Destination: destination,
-          FinishAfter: releaseDateInSeconds,
-        },
-        instructions
-      )
+    return this.#api.prepareTransaction(
+      {
+        TransactionType: 'EscrowCreate',
+        Account: wallet.account.xAddress,
+        Amount: this.#api.xrpToDrops(xrpAmount),
+        Destination: destination,
+        FinishAfter: releaseDateInSeconds,
+      },
+      instructions
     );
   };
 
-  public createEscrow = async (
+  public createEscrow = (
     xrpAmount: number,
     destination: string,
     releaseDateInSeconds: number,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
-
     const escrowReleaseDate = releaseDateInSeconds - RIPPLE_EPOCH;
     const submittedEscrow = this.prepareEscrowCreate(
       xrpAmount,
@@ -125,32 +122,22 @@ export class RippleAPIClient {
     offerSequence: number,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
-
-    return this.connect().then(() =>
-      this.#api.prepareTransaction(
-        {
-          TransactionType: 'EscrowFinish',
-          Account: escrowOwner,
-          Owner: escrowOwner,
-          OfferSequence: offerSequence,
-        },
-        instructions
-      )
+    return this.#api.prepareTransaction(
+      {
+        TransactionType: 'EscrowFinish',
+        Account: escrowOwner,
+        Owner: escrowOwner,
+        OfferSequence: offerSequence,
+      },
+      instructions
     );
   };
 
-  public finishEscrow = async (
+  public finishEscrow = (
     escrowOwner: string,
     offerSequence: number,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
-
     const submittedEscrow = this.prepareEscrowFinish(
       escrowOwner,
       offerSequence,
@@ -169,10 +156,6 @@ export class RippleAPIClient {
     destination: string,
     instructions?: Instructions
   ) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
-    }
-
     const submittedPayment = this.preparePayment(xrpAmount, destination, {
       // Expire this transaction if it doesn't execute within ~5 minutes:
       maxLedgerVersionOffset: 75,
@@ -187,7 +170,9 @@ export class RippleAPIClient {
   };
 
   private waitForTxValidation = (txId: string, maxLedgerVersion: number) => {
-    if (!this.#wallet) return;
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
 
     this.#api.request('subscribe', {
       accounts: [this.#wallet.account.address!],
@@ -214,6 +199,10 @@ export class RippleAPIClient {
   private signAndWaitForTxValidation = async (
     transactionPreparation: Promise<Prepare>
   ) => {
+    if (this.#wallet === null) {
+      throw new Error('Input wallet credentials or instantiate a new one.');
+    }
+
     const preparedTx = await transactionPreparation;
     const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
     const signed = await this.#api.sign(
