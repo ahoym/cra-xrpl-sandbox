@@ -1,6 +1,12 @@
 // NOTE: Made ripple-lib a frontend dependency for experimenting/sandboxing only.
 // Any mature implementations should move this to a dedicated server instead.
-import { APIOptions, Instructions, Prepare, RippleAPI } from 'ripple-lib';
+import {
+  APIOptions,
+  Instructions,
+  Prepare,
+  RippleAPI,
+  TransactionJSON,
+} from 'ripple-lib';
 import { FaucetWallet } from 'ripple-lib/dist/npm/wallet/wallet-generation';
 
 const RIPPLE_EPOCH = 946684800;
@@ -11,6 +17,15 @@ const FIVE_MINUTES_MS = 5 * ONE_MINUTE_MS;
 interface SubscribeOptions {
   accounts: string[];
 }
+
+type TxEvent = {
+  ledger_hash: string;
+  ledger_index: number;
+  status: string;
+  type: string;
+  validated: boolean;
+  transactions: TransactionJSON;
+};
 
 export class RippleAPIClient {
   #api: RippleAPI;
@@ -174,6 +189,19 @@ export class RippleAPIClient {
 
   public getTransaction = (txId: string) => {
     return this.#api.getTransaction(txId);
+  };
+
+  public subscribeToAccountTransactions = (
+    subscribeOptions: SubscribeOptions,
+    onTransaction: (event: TxEvent) => Promise<unknown>
+  ) => {
+    this.#api.request('subscribe', {
+      accounts: subscribeOptions.accounts,
+    });
+
+    this.#api.connection.on('transaction', (event: TxEvent) => {
+      onTransaction(event);
+    });
   };
 
   private waitForTxValidation = (
