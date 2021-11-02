@@ -1,6 +1,6 @@
 // NOTE: Made ripple-lib a frontend dependency for experimenting/sandboxing only.
 // Any mature implementations should move this to a dedicated server instead.
-import { APIOptions, Instructions, RippleAPI } from 'ripple-lib';
+import { APIOptions, Instructions, Prepare, RippleAPI } from 'ripple-lib';
 import { FaucetWallet } from 'ripple-lib/dist/npm/wallet/wallet-generation';
 
 const RIPPLE_EPOCH = 946684800;
@@ -71,29 +71,6 @@ export class RippleAPIClient {
     );
   };
 
-  public waitForTxValidation = (txId: string, maxLedgerVersion: number) => {
-    this.#api.request('subscribe', {
-      accounts: [this.#wallet?.account.address!],
-    });
-    let hasFinalStatus = false;
-
-    return new Promise((resolve, reject) => {
-      this.#api.connection.on('transaction', (event) => {
-        if (event.transaction.hash === txId) {
-          hasFinalStatus = true;
-          resolve(event);
-        }
-      });
-
-      this.#api.connection.on('ledger', (ledger) => {
-        if (ledger.ledgerVersion > maxLedgerVersion && !hasFinalStatus) {
-          hasFinalStatus = true;
-          reject(txId); // If transation hasn't succeeded by now, it's expired
-        }
-      });
-    });
-  };
-
   public prepareEscrowCreate = (
     xrpAmount: number,
     destination: string,
@@ -129,9 +106,7 @@ export class RippleAPIClient {
     }
 
     const escrowReleaseDate = releaseDateInSeconds - RIPPLE_EPOCH;
-    let maxLedgerVersion: number;
-
-    const submittedEscrow = await this.prepareEscrowCreate(
+    const submittedEscrow = this.prepareEscrowCreate(
       xrpAmount,
       destination,
       escrowReleaseDate,
@@ -140,18 +115,9 @@ export class RippleAPIClient {
         maxLedgerVersionOffset: 75,
         ...instructions,
       }
-    )
-      .then((preparedTx) => {
-        maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
-        return this.#api.sign(preparedTx.txJSON, this.#wallet!.account.secret);
-      })
-      .then(async (signed) => {
-        const earliestLedgerVersion = (await this.#api.getLedgerVersion()) + 1;
-        this.#api.submit(signed.signedTransaction);
-        return { txId: signed.id, earliestLedgerVersion };
-      });
+    );
 
-    return this.waitForTxValidation(submittedEscrow.txId, maxLedgerVersion!);
+    return this.signAndWaitForTxValidation(submittedEscrow);
   };
 
   public prepareEscrowFinish = (
@@ -185,9 +151,7 @@ export class RippleAPIClient {
       throw new Error('Input wallet credentials or instantiate a new one.');
     }
 
-    let maxLedgerVersion: number;
-
-    const submittedEscrow = await this.prepareEscrowFinish(
+    const submittedEscrow = this.prepareEscrowFinish(
       escrowOwner,
       offerSequence,
       {
@@ -195,18 +159,9 @@ export class RippleAPIClient {
         maxLedgerVersionOffset: 75,
         ...instructions,
       }
-    )
-      .then((preparedTx) => {
-        maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
-        return this.#api.sign(preparedTx.txJSON, this.#wallet!.account.secret);
-      })
-      .then(async (signed) => {
-        const earliestLedgerVersion = (await this.#api.getLedgerVersion()) + 1;
-        this.#api.submit(signed.signedTransaction);
-        return { txId: signed.id, earliestLedgerVersion };
-      });
+    );
 
-    return this.waitForTxValidation(submittedEscrow.txId, maxLedgerVersion!);
+    return this.signAndWaitForTxValidation(submittedEscrow);
   };
 
   public sendPayment = async (
@@ -217,28 +172,58 @@ export class RippleAPIClient {
     if (this.#wallet === null) {
       throw new Error('Input wallet credentials or instantiate a new one.');
     }
-    let maxLedgerVersion: number;
 
-    const submittedPayment = await this.preparePayment(xrpAmount, destination, {
+    const submittedPayment = this.preparePayment(xrpAmount, destination, {
       // Expire this transaction if it doesn't execute within ~5 minutes:
       maxLedgerVersionOffset: 75,
       ...instructions,
-    })
-      .then((preparedTx) => {
-        maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
-        return this.#api.sign(preparedTx.txJSON, this.#wallet!.account.secret);
-      })
-      .then(async (signed) => {
-        const earliestLedgerVersion = (await this.#api.getLedgerVersion()) + 1;
-        this.#api.submit(signed.signedTransaction);
-        return { txId: signed.id, earliestLedgerVersion };
-      });
+    });
 
-    return this.waitForTxValidation(submittedPayment.txId, maxLedgerVersion!);
+    return this.signAndWaitForTxValidation(submittedPayment);
   };
 
   public getTransaction = (txId: string) => {
     return this.#api.getTransaction(txId);
+  };
+
+  private waitForTxValidation = (txId: string, maxLedgerVersion: number) => {
+    if (!this.#wallet) return;
+
+    this.#api.request('subscribe', {
+      accounts: [this.#wallet.account.address!],
+    });
+    let hasFinalStatus = false;
+
+    return new Promise((resolve, reject) => {
+      this.#api.connection.on('transaction', (event) => {
+        if (event.transaction.hash === txId) {
+          hasFinalStatus = true;
+          resolve(event);
+        }
+      });
+
+      this.#api.connection.on('ledger', (ledger) => {
+        if (ledger.ledgerVersion > maxLedgerVersion && !hasFinalStatus) {
+          hasFinalStatus = true;
+          reject(txId); // If transation hasn't succeeded by now, it's expired
+        }
+      });
+    });
+  };
+
+  private signAndWaitForTxValidation = async (
+    transactionPreparation: Promise<Prepare>
+  ) => {
+    const preparedTx = await transactionPreparation;
+    const maxLedgerVersion = preparedTx.instructions.maxLedgerVersion!;
+    const signed = await this.#api.sign(
+      preparedTx.txJSON,
+      this.#wallet!.account.secret
+    );
+
+    this.#api.submit(signed.signedTransaction);
+
+    return this.waitForTxValidation(signed.id, maxLedgerVersion);
   };
 }
 
