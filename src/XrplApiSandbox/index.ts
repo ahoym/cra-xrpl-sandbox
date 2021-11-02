@@ -191,10 +191,12 @@ export class RippleAPIClient {
     return this.#api.getTransaction(txId);
   };
 
-  public subscribeToAccountTransactions = (
+  public subscribeToAccountTransactions = async (
     subscribeOptions: SubscribeOptions,
-    onTransaction: (event: TxEvent) => Promise<unknown>
+    onTransaction: (event: TxEvent) => Promise<unknown> | unknown
   ) => {
+    await this.connect();
+
     this.#api.request('subscribe', {
       accounts: subscribeOptions.accounts,
     });
