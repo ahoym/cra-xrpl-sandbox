@@ -5,6 +5,13 @@ import { FaucetWallet } from 'ripple-lib/dist/npm/wallet/wallet-generation';
 
 const RIPPLE_EPOCH = 946684800;
 
+const ONE_MINUTE_MS = 60 * 1000;
+const FIVE_MINUTES_MS = 5 * ONE_MINUTE_MS;
+
+interface SubscribeOptions {
+  accounts: string[];
+}
+
 export class RippleAPIClient {
   #api: RippleAPI;
   #wallet: FaucetWallet | null;
@@ -169,13 +176,21 @@ export class RippleAPIClient {
     return this.#api.getTransaction(txId);
   };
 
-  private waitForTxValidation = (txId: string, maxLedgerVersion: number) => {
-    if (this.#wallet === null) {
-      throw new Error('Input wallet credentials or instantiate a new one.');
+  private waitForTxValidation = (
+    txId: string,
+    maxLedgerVersion?: number,
+    subscribeOptions?: SubscribeOptions
+  ) => {
+    let accounts: string[] = [];
+
+    if (subscribeOptions?.accounts) {
+      accounts = subscribeOptions.accounts;
+    } else if (this.#wallet) {
+      accounts = [this.#wallet.account.xAddress];
     }
 
     this.#api.request('subscribe', {
-      accounts: [this.#wallet.account.address!],
+      accounts,
     });
     let hasFinalStatus = false;
 
@@ -188,9 +203,16 @@ export class RippleAPIClient {
       });
 
       this.#api.connection.on('ledger', (ledger) => {
-        if (ledger.ledgerVersion > maxLedgerVersion && !hasFinalStatus) {
-          hasFinalStatus = true;
-          reject(txId); // If transation hasn't succeeded by now, it's expired
+        if (maxLedgerVersion) {
+          if (ledger.ledgerVersion > maxLedgerVersion && !hasFinalStatus) {
+            hasFinalStatus = true;
+            reject(txId); // If transation hasn't succeeded by now, it's expired
+          }
+        } else {
+          const timeout = setTimeout(() => {
+            reject(txId);
+            clearTimeout(timeout);
+          }, FIVE_MINUTES_MS);
         }
       });
     });
