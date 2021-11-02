@@ -58,24 +58,6 @@ export class RippleAPIClient {
       });
   };
 
-  public preparePayment = async (
-    xrpAmount: number,
-    destination: string,
-    instructions?: Instructions
-  ) => {
-    const wallet = await this.connectAndGetWallet();
-
-    return this.#api.prepareTransaction(
-      {
-        TransactionType: 'Payment',
-        Account: wallet.account.xAddress,
-        Amount: this.#api.xrpToDrops(xrpAmount),
-        Destination: destination,
-      },
-      instructions
-    );
-  };
-
   public prepareEscrowCreate = async (
     xrpAmount: number,
     destination: string,
@@ -149,6 +131,24 @@ export class RippleAPIClient {
     );
 
     return this.signAndWaitForTxValidation(submittedEscrow);
+  };
+
+  public preparePayment = async (
+    xrpAmount: number,
+    destination: string,
+    instructions?: Instructions
+  ) => {
+    const wallet = await this.connectAndGetWallet();
+
+    return this.#api.prepareTransaction(
+      {
+        TransactionType: 'Payment',
+        Account: wallet.account.xAddress,
+        Amount: this.#api.xrpToDrops(xrpAmount),
+        Destination: destination,
+      },
+      instructions
+    );
   };
 
   public sendPayment = async (
