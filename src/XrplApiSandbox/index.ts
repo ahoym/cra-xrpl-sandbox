@@ -186,7 +186,7 @@ export class RippleAPIClient {
     if (subscribeOptions?.accounts) {
       accounts = subscribeOptions.accounts;
     } else if (this.#wallet) {
-      accounts = [this.#wallet.account.xAddress];
+      accounts = [this.#wallet.account.address!];
     }
 
     this.#api.request('subscribe', {
