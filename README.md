@@ -13,7 +13,7 @@ And play around with the library in the browser web console + enjoy auto updates
 
 See the `xrpl` reference documentation for more details: https://xrpl.org/rippleapi-reference.html
 
-## Recommended Tooling/Setup ##
+## Recommended Tooling/Setup
 
 - [Get `volta`](https://volta.sh/) for node/yarn version management
 - (Optional, may not be necessary with `volta`) [Get `homebrew`](https://brew.sh/) for macOS package management
