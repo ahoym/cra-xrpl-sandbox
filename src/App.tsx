@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
-import { xrplClient, xrplClientTwo } from './XrplApiSandbox';
+import { xrplClient1, xrplClient2 } from './XrplSandbox';
 
 // Can import and run TS scripts this way if so desired
 // import './XrplApiSandbox/scripts/sendXrp';
 // import './XrplApiSandbox/scripts/sendEscrow';
 
 // Generate testnet wallets
-const generateWalletRequestOne = xrplClient.generateFaucetWallet();
-const generateWalletRequestTwo = xrplClientTwo.generateFaucetWallet();
+const generateWalletRequestOne = xrplClient1.generateWallet();
+const generateWalletRequestTwo = xrplClient2.generateWallet();
 
 function App() {
   const [logs, setLogs] = useState<unknown[]>([]);
@@ -37,9 +37,7 @@ function App() {
   useEffect(() => {
     // After testnet wallet creations, send a 22 XRP payment
     Promise.all([generateWalletRequestOne, generateWalletRequestTwo])
-      .then(() =>
-        xrplClient.sendPayment(22, xrplClientTwo.wallet()?.account.address!)
-      )
+      .then(() => xrplClient1.sendPayment(22, xrplClient2.wallet()!.address!))
       .then((result) => {
         setLogs((logState) => [
           result,
