@@ -1,6 +1,6 @@
 # Create-react-app + XRPL sandbox
 
-Putting the typescript XRPL client, [`ripple-lib`](https://github.com/ripple/ripple-lib), in a CRA app so it can be sandboxed and experimented with easily. Developers can:
+Putting the typescript XRPL client, [`xrpl.js`](https://github.com/XRPLF/xrpl.js), in a CRA app so it can be sandboxed and experimented with easily. Developers can fork the project, or:
 
 1. `git clone https://github.com/ahoym/cra-xrpl-sandbox.git`
 2. `cd cra-xrpl-sandbox`
@@ -9,7 +9,7 @@ Putting the typescript XRPL client, [`ripple-lib`](https://github.com/ripple/rip
 
 And play around with the library in the browser web console + enjoy auto updates to the TS file(s).
 
-See the `xrpl` reference documentation for more details: https://xrpl.org/rippleapi-reference.html
+See the `xrpl` reference documentation for more details: https://xrpl.org/tutorials.html
 
 ## Recommended Tooling/Setup ##
 
@@ -17,6 +17,10 @@ See the `xrpl` reference documentation for more details: https://xrpl.org/ripple
 - [Get `homebrew`](https://brew.sh/) for macOS package management
 - [Get and use `yarn`](https://classic.yarnpkg.com/en/docs/install/#homebrew) instead of `npm`
   - `brew install yarn`
+
+## Developer notes
+
+This project is still using react-scripts/CRA v4 because CRA v5 uses webpack v5, which does not bundle node core modules. While this makes sense in the browser world, it is an inconvenience for this project as xrpl.js does require usage of said modules. Since this is a sandbox starter, we opt to leave this on CRA v4 just for convenience's sake.
 
 # Getting Started with Create React App
 
