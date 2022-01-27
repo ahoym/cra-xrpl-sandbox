@@ -11,11 +11,11 @@ And play around with the library in the browser web console + enjoy auto updates
 
 See the `xrpl` reference documentation for more details: https://xrpl.org/tutorials.html
 
-## Recommended Tooling/Setup ##
+## Recommended Tooling/Setup
 
 - [Get `volta`](https://volta.sh/) for node/yarn version management
-- [Get `homebrew`](https://brew.sh/) for macOS package management
-- [Get and use `yarn`](https://classic.yarnpkg.com/en/docs/install/#homebrew) instead of `npm`
+- (Optional, may not be necessary with `volta`) [Get `homebrew`](https://brew.sh/) for macOS package management
+- (Optional, may not be necessary with `volta`) [Get and use `yarn`](https://classic.yarnpkg.com/en/docs/install/#homebrew) instead of `npm`
   - `brew install yarn`
 
 ## Developer notes
