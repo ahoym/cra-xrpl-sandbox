@@ -4,8 +4,7 @@ import logo from './logo.svg';
 import { xrplClient1, xrplClient2 } from './XrplSandbox';
 
 // Can import and run TS scripts this way if so desired
-// import './XrplApiSandbox/scripts/sendXrp';
-// import './XrplApiSandbox/scripts/sendEscrow';
+// import './XrplSandbox/scripts/sendXrp';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient1.generateWallet();

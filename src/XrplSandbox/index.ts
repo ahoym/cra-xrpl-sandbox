@@ -1,6 +1,9 @@
 import { Client, ClientOptions, Wallet, xrpToDrops } from 'xrpl';
 
 const TEST_NET = 'wss://s.altnet.rippletest.net:51233';
+const RIPPLE_EPOCH = 946684800;
+const ONE_MINUTE_MS = 60 * 1000;
+const FIVE_MINUTES_MS = 5 * ONE_MINUTE_MS;
 
 export class XrplClient {
   #client: Client;
