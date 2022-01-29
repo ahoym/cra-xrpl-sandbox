@@ -7,8 +7,7 @@ import { nftDevNetXrplClient1 } from '../createClients';
  *
  * {@link https://xrpl.org/xrp-testnet-faucet.html}
  */
-const FAUCET_WALLET_SECRET = 'spx576S1tX8kgu2x6YkLnudrEXnDY';
-// const FAUCET_WALLET_SECRET = 'go-to-@link-above';
+const FAUCET_WALLET_SECRET = 'go-to-@link-above';
 
 nftDevNetXrplClient1
   .generateWallet(FAUCET_WALLET_SECRET)
