@@ -153,9 +153,10 @@ export function generateTestnetXrplClient() {
 }
 
 /**
- * See @link to get credentials from the NFT-Devnet XRP faucet
- * {@link https://xrpl.org/xrp-testnet-faucet.html}
+ * See @link to get credentials from the NFT-Devnet XRP faucet.
+ * > Generate NFT-Devnet credentials > Copy "Secret" > nftDevNetXrplClient1.generateWallet("Secret");
  *
+ * {@link https://xrpl.org/xrp-testnet-faucet.html}
  * @returns XrplClient wrapper around the xrpl.Client
  */
 export function generateNftDevnetXrplClient() {
