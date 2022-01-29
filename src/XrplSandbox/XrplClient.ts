@@ -6,7 +6,6 @@ import {
   NFTokenCreateOfferFlags,
   NFTokenMint,
   NFTokenMintFlags,
-  Payment,
   TxResponse,
   Wallet,
   xrpToDrops,
@@ -21,7 +20,6 @@ export class XrplClient {
   constructor(server: string, options?: ClientOptions) {
     this.#client = new Client(server, options);
     this.#wallet = null;
-
     this.connect();
   }
 
@@ -32,7 +30,6 @@ export class XrplClient {
     if (this.#client.isConnected()) {
       return Promise.resolve();
     }
-
     return this.#client.connect();
   };
 
@@ -41,9 +38,8 @@ export class XrplClient {
 
     if (this.#wallet) {
       return Promise.resolve(this.#wallet);
-    } else {
-      return this.generateWallet();
     }
+    return this.generateWallet();
   };
 
   public generateWallet = async (fromSeed?: string): Promise<Wallet> => {
@@ -60,29 +56,17 @@ export class XrplClient {
     return this.#wallet;
   };
 
-  public preparePayment = async (
-    xrpAmount: number,
-    destinationAddress: string
-  ): Promise<Payment> => {
-    const wallet = await this.connectAndGetWallet();
-
-    return this.#client.autofill({
-      TransactionType: 'Payment',
-      Account: wallet.address,
-      Amount: xrpToDrops(xrpAmount),
-      Destination: destinationAddress,
-    });
-  };
-
   public sendPayment = async (
     xrpAmount: number,
     destinationAddress: string
   ): Promise<TxResponse> => {
     const wallet = await this.connectAndGetWallet();
-    const preparedPayment = await this.preparePayment(
-      xrpAmount,
-      destinationAddress
-    );
+    const preparedPayment = await this.#client.autofill({
+      TransactionType: 'Payment',
+      Account: wallet.address,
+      Amount: xrpToDrops(xrpAmount),
+      Destination: destinationAddress,
+    });
     const signed = wallet.sign(preparedPayment);
 
     return this.#client.submitAndWait(signed.tx_blob);
@@ -105,7 +89,6 @@ export class XrplClient {
       Account: wallet.address,
       Flags: NFTokenMintFlags.tfTransferable,
       TokenTaxon: 0, // [To-Clarify] What is the practical use case of the TokenTaxon?
-
       /**
        * Issuer field also requires the AccountRoot to have the `MintAccount` field set to wallet.address.
        * This can be set through the {@link https://xrpl.org/accountset.html} AccountSet Tx.
@@ -116,7 +99,6 @@ export class XrplClient {
     if (URI) {
       nfTokenMintTxPayload.URI = URI;
     }
-
     // Throw an error instead if desired. See NFTokenMint transaction in jsdoc to see TransferFee constraints.
     const isValidTransferFee =
       !!transferFee && transferFee >= 0 && transferFee <= 9999;
@@ -176,7 +158,6 @@ export class XrplClient {
     if (destination) {
       nfTokenCreateOfferPayload.Destination = destination;
     }
-
     if (expirationISOString) {
       const dateTimeInMs = new Date(expirationISOString).getTime();
       const differenceInMs = dateTimeInMs - RIPPLE_EPOCH_IN_MS;
