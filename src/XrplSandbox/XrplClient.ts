@@ -112,7 +112,7 @@ export class XrplClient {
       nfTokenMintTxPayload.URI = URI;
     }
 
-    // Throw an error instead if desired.
+    // Throw an error instead if desired. See NFTokenMint transaction in jsdoc to see TransferFee constraints.
     const isValidTransferFee =
       !!transferFee && transferFee >= 0 && transferFee <= 9999;
     if (isValidTransferFee) {
