@@ -1,4 +1,11 @@
-import { Client, ClientOptions, Wallet, xrpToDrops } from 'xrpl';
+import {
+  Client,
+  ClientOptions,
+  Payment,
+  TxResponse,
+  Wallet,
+  xrpToDrops,
+} from 'xrpl';
 
 const TEST_NET = 'wss://s.altnet.rippletest.net:51233';
 const RIPPLE_EPOCH = 946684800;
@@ -19,7 +26,7 @@ export class XrplClient {
   public client = () => this.#client;
   public wallet = () => this.#wallet;
 
-  private connect = () => {
+  private connect = (): Promise<void> => {
     if (this.#client.isConnected()) {
       return Promise.resolve();
     }
@@ -27,7 +34,7 @@ export class XrplClient {
     return this.#client.connect();
   };
 
-  public connectAndGetWallet = async () => {
+  public connectAndGetWallet = async (): Promise<Wallet> => {
     await this.connect();
 
     if (this.#wallet) {
@@ -37,7 +44,7 @@ export class XrplClient {
     }
   };
 
-  public generateWallet = async (fromSeed?: string) => {
+  public generateWallet = async (fromSeed?: string): Promise<Wallet> => {
     await this.connect();
 
     if (fromSeed) {
@@ -54,7 +61,7 @@ export class XrplClient {
   public preparePayment = async (
     xrpAmount: number,
     destinationAddress: string
-  ) => {
+  ): Promise<Payment> => {
     const wallet = await this.connectAndGetWallet();
 
     return this.#client.autofill({
@@ -68,7 +75,7 @@ export class XrplClient {
   public sendPayment = async (
     xrpAmount: number,
     destinationAddress: string
-  ) => {
+  ): Promise<TxResponse> => {
     const wallet = await this.connectAndGetWallet();
     const preparedPayment = await this.preparePayment(
       xrpAmount,
