@@ -5,6 +5,7 @@ import { xrplClient1, xrplClient2 } from './XrplSandbox';
 
 // Can import and run TS scripts this way if so desired
 // import './XrplSandbox/scripts/sendXrp';
+// import './XrplSandbox/scripts/mintTransferableNft';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient1.generateWallet();
