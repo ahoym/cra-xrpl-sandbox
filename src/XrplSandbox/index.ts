@@ -57,7 +57,7 @@ export class XrplClient {
     if (fromSeed) {
       this.#wallet = Wallet.fromSeed(fromSeed);
     } else {
-      // Instantiate testnet wallet
+      // Instantiate a wallet, only for test and devnets. Currently doesn't seem to work for NFT-Devnet.
       const fundResult = await this.#client.fundWallet();
       this.#wallet = fundResult.wallet;
     }
