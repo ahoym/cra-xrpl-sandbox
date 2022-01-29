@@ -9,10 +9,10 @@ import { nftDevNetXrplClient1 } from '../createClients';
  */
 const FAUCET_WALLET_SECRET = 'go-to-@link-above';
 
-nftDevNetXrplClient1
+export const mintTransferableNftProcedure = nftDevNetXrplClient1
   .generateWallet(FAUCET_WALLET_SECRET)
   .then(logMessageAndPass('Created wallet on NFT-Devnet'))
-  .then(() => nftDevNetXrplClient1.mintTransferableNft())
+  .then(() => nftDevNetXrplClient1.mintTransferableNft()) // Can pass options to method if desired
   .then(logMessageAndPass('Minted a transferable NFT'))
-  .then(() => nftDevNetXrplClient1.viewOwnNfts())
-  .then(logMessageAndPass('Listed NFTs on the wallet account'));
+  .then(nftDevNetXrplClient1.viewOwnNfts)
+  .then(logMessageAndPass('List NFTs on the wallet account response'));
