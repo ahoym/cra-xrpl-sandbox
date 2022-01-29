@@ -2,6 +2,8 @@ import {
   Client,
   ClientOptions,
   NFTokenBurn,
+  NFTokenCreateOffer,
+  NFTokenCreateOfferFlags,
   NFTokenMint,
   NFTokenMintFlags,
   Payment,
@@ -9,6 +11,8 @@ import {
   Wallet,
   xrpToDrops,
 } from 'xrpl';
+import { Amount } from 'xrpl/dist/npm/models/common';
+import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from './constants';
 
 export class XrplClient {
   #client: Client;
@@ -144,5 +148,54 @@ export class XrplClient {
     };
 
     return this.#client.submitAndWait(burnNftTxPayload, { wallet });
+  };
+
+  /**
+   * {@link https://xrpl.org/nftokencreateoffer.html}
+   */
+  public createNftSellOffer = async ({
+    amount,
+    tokenId,
+    destination,
+    expirationISOString,
+  }: {
+    amount: Amount | number;
+    tokenId: string;
+    destination?: string;
+    expirationISOString?: string;
+  }): Promise<TxResponse> => {
+    const wallet = await this.connectAndGetWallet();
+    const nfTokenCreateOfferPayload: NFTokenCreateOffer = {
+      TransactionType: 'NFTokenCreateOffer',
+      Account: wallet.address,
+      Amount: typeof amount === 'number' ? xrpToDrops(amount) : amount,
+      TokenID: tokenId,
+      Flags: NFTokenCreateOfferFlags.tfSellToken,
+    };
+
+    if (destination) {
+      nfTokenCreateOfferPayload.Destination = destination;
+    }
+
+    if (expirationISOString) {
+      const dateTimeInMs = new Date(expirationISOString).getTime();
+      const differenceInMs = dateTimeInMs - RIPPLE_EPOCH_IN_MS;
+      nfTokenCreateOfferPayload.Expiration = Math.floor(
+        differenceInMs / MS_IN_S
+      );
+    }
+
+    return this.#client.submitAndWait(nfTokenCreateOfferPayload, { wallet });
+  };
+
+  public listNftSellOffers = async (tokenId: string) => {
+    try {
+      return await this.#client.request({
+        command: 'nft_sell_offers',
+        tokenid: tokenId,
+      });
+    } catch (error: unknown) {
+      return [];
+    }
   };
 }
