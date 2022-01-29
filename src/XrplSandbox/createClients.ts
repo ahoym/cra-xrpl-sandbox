@@ -65,6 +65,11 @@ console.log(
   'Run the listExplorers() function to list out links to all xrpl subnet explorers'
 );
 listExplorers();
+console.log(
+  'For NFT-Devnet Credentials, see: ',
+  'https://xrpl.org/xrp-testnet-faucet.html'
+);
+
 console.log('🤖 💻 Happy sandboxing! 🖥️ 🤖');
 
 /**
