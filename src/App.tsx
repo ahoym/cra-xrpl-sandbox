@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import logo from './logo.svg';
-import { xrplClient1, xrplClient2 } from './XrplSandbox';
+import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 
 // Can import and run TS scripts this way if so desired
 // import './XrplSandbox/scripts/sendXrp';

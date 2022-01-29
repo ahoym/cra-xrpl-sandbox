@@ -1,5 +1,5 @@
 import { logMessageAndPass } from '../../utilities';
-import { xrplClient1, xrplClient2 } from '../index';
+import { xrplClient1, xrplClient2 } from '../createClients';
 
 /**
  * For those that prefer to sandbox through script form.

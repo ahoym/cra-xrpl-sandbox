@@ -1,5 +1,5 @@
 import { logMessageAndPass } from '../../utilities';
-import { nftDevNetXrplClient1 } from '../index';
+import { nftDevNetXrplClient1 } from '../createClients';
 
 /**
  * See @link to get credentials from the NFT-Devnet XRP faucet.
