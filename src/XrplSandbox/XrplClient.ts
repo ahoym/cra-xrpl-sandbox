@@ -1,6 +1,7 @@
 import {
   Client,
   ClientOptions,
+  NFTokenBurn,
   NFTokenMint,
   NFTokenMintFlags,
   Payment,
@@ -129,5 +130,19 @@ export class XrplClient {
       command: 'account_nfts',
       account: wallet.address,
     });
+  };
+
+  /**
+   * {@link https://xrpl.org/nftokenburn.html}
+   */
+  public burnNft = async (tokenId: string): Promise<TxResponse> => {
+    const wallet = await this.connectAndGetWallet();
+    const burnNftTxPayload: NFTokenBurn = {
+      TransactionType: 'NFTokenBurn',
+      Account: wallet.address,
+      TokenID: tokenId,
+    };
+
+    return this.#client.submitAndWait(burnNftTxPayload, { wallet });
   };
 }
