@@ -4,6 +4,14 @@ import { nftDevNetXrplClient1, nftDevNetXrplClient2 } from '../createClients';
 import { NFT } from '../types';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
+/**
+ * Use case:
+ * - Someone (Client1) who mints a NFT wants to sell it specifically to someone else (Client2)
+ * - Client1 creates a NFT sell offer with the destination of Client2.address
+ * - Client2 accepts the NFT sell offer
+ * - Client2 receives the NFT
+ */
+
 const RANDOM_XRP_VALUE = Math.round(Math.random() * 100);
 let tokenId: string;
 
