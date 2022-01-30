@@ -30,7 +30,7 @@ const selectNftToSell = mintTransferableNftProcedure
  *
  * {@link https://xrpl.org/xrp-testnet-faucet.html}
  */
-const FAUCET_WALLET_SECRET = 'sn5f4f7WSEfcyS6guTiau9ddkUaXT';
+const FAUCET_WALLET_SECRET = 'go-to-@link-above';
 
 const generateWalletForClient2 = nftDevNetXrplClient2
   .generateWallet(FAUCET_WALLET_SECRET)
