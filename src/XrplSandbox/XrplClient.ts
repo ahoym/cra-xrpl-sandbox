@@ -133,6 +133,12 @@ export class XrplClient {
   };
 
   /**
+   * Note that this transaction type is used for both BUY and SELLs.
+   * The differentiators are the various properties of the payload.
+   *
+   * SELL requires:
+   * - Flag.tfSellToken to be set
+   *
    * {@link https://xrpl.org/nftokencreateoffer.html}
    */
   public createNftSellOffer = async ({
@@ -147,7 +153,7 @@ export class XrplClient {
     expirationISOString?: string;
   }): Promise<TxResponse> => {
     const wallet = await this.connectAndGetWallet();
-    const nfTokenCreateOfferPayload: NFTokenCreateOffer = {
+    const nfTokenCreateSellOfferPayload: NFTokenCreateOffer = {
       TransactionType: 'NFTokenCreateOffer',
       Account: wallet.address,
       Amount: typeof amount === 'number' ? xrpToDrops(amount) : amount,
@@ -156,17 +162,19 @@ export class XrplClient {
     };
 
     if (destination) {
-      nfTokenCreateOfferPayload.Destination = destination;
+      nfTokenCreateSellOfferPayload.Destination = destination;
     }
     if (expirationISOString) {
       const dateTimeInMs = new Date(expirationISOString).getTime();
       const differenceInMs = dateTimeInMs - RIPPLE_EPOCH_IN_MS;
-      nfTokenCreateOfferPayload.Expiration = Math.floor(
+      nfTokenCreateSellOfferPayload.Expiration = Math.floor(
         differenceInMs / MS_IN_S
       );
     }
 
-    return this.#client.submitAndWait(nfTokenCreateOfferPayload, { wallet });
+    return this.#client.submitAndWait(nfTokenCreateSellOfferPayload, {
+      wallet,
+    });
   };
 
   public listNftSellOffers = async (tokenId: string) => {
