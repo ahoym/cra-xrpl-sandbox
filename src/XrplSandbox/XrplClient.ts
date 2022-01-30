@@ -2,6 +2,7 @@ import {
   Client,
   ClientOptions,
   NFTokenBurn,
+  NFTokenCancelOffer,
   NFTokenCreateOffer,
   NFTokenCreateOfferFlags,
   NFTokenMint,
@@ -235,5 +236,20 @@ export class XrplClient {
     } catch (error: unknown) {
       return [];
     }
+  };
+
+  /**
+   * {@link https://xrpl.org/nftokencanceloffer.html}
+   * @param tokenOfferIndices array of NFT offer `index`es
+   */
+  public cancelNftOffers = async (tokenOfferIndices: string[]) => {
+    const wallet = await this.connectAndGetWallet();
+    const cancelNftOffersPayload: NFTokenCancelOffer = {
+      TransactionType: 'NFTokenCancelOffer',
+      Account: wallet.address,
+      TokenOffers: tokenOfferIndices,
+    };
+
+    return this.#client.submitAndWait(cancelNftOffersPayload, { wallet });
   };
 }
