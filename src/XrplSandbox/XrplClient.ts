@@ -1,6 +1,7 @@
 import {
   Client,
   ClientOptions,
+  NFTokenAcceptOffer,
   NFTokenBurn,
   NFTokenCancelOffer,
   NFTokenCreateOffer,
@@ -251,5 +252,48 @@ export class XrplClient {
     };
 
     return this.#client.submitAndWait(cancelNftOffersPayload, { wallet });
+  };
+
+  /**
+   * For cases where a buyer can accept a sell offer from a NFT owner.
+   * {@link https://xrpl.org/nftokenacceptoffer.html}
+   */
+  public acceptNftSellOffer = async (
+    offerIndex: string,
+    brokerFee?: Amount
+  ): Promise<TxResponse> => {
+    const wallet = await this.connectAndGetWallet();
+    const acceptNftSellOfferPayload: NFTokenAcceptOffer = {
+      TransactionType: 'NFTokenAcceptOffer',
+      Account: wallet.address,
+      SellOffer: offerIndex,
+    };
+
+    if (brokerFee) {
+      acceptNftSellOfferPayload.BrokerFee = brokerFee;
+    }
+
+    return this.#client.submitAndWait(acceptNftSellOfferPayload, { wallet });
+  };
+
+  /**
+   * {@link https://xrpl.org/nftokenacceptoffer.html}
+   */
+  public acceptNftBuyOffer = async (
+    offerIndex: string,
+    brokerFee?: Amount
+  ): Promise<TxResponse> => {
+    const wallet = await this.connectAndGetWallet();
+    const acceptNftBuyOfferPayload: NFTokenAcceptOffer = {
+      TransactionType: 'NFTokenAcceptOffer',
+      Account: wallet.address,
+      BuyOffer: offerIndex,
+    };
+
+    if (brokerFee) {
+      acceptNftBuyOfferPayload.BrokerFee = brokerFee;
+    }
+
+    return this.#client.submitAndWait(acceptNftBuyOfferPayload, { wallet });
   };
 }
