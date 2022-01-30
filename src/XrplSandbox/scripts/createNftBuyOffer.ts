@@ -33,8 +33,6 @@ export const mintNftAndCreateBidProcedure = Promise.all([
   mintTokenFromClient1,
   generateWalletForClient2,
 ])
-  .then(() => nftDevNetXrplClient2.listNftBuyOffers(tokenId))
-  .then(logMessageAndPass('Listed buy offers for the NFT'))
   .then(() =>
     nftDevNetXrplClient2.createNftBuyOffer({
       amount: RANDOM_XRP_VALUE,
