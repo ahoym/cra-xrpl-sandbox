@@ -8,6 +8,7 @@ import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 // import './XrplSandbox/scripts/mintTransferableNft';
 // import './XrplSandbox/scripts/burnNft';
 // import './XrplSandbox/scripts/createNftSellOffer';
+import './XrplSandbox/scripts/createNftBuyOffer';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient1.generateWallet();
