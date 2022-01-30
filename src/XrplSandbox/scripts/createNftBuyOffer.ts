@@ -3,6 +3,7 @@ import { nftDevNetXrplClient1, nftDevNetXrplClient2 } from '../createClients';
 import { NFT } from '../types';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
+const RANDOM_XRP_VALUE = Math.round(Math.random() * 100);
 let tokenId: string;
 
 const mintTokenFromClient1 = mintTransferableNftProcedure
@@ -28,16 +29,21 @@ const generateWalletForClient2 = nftDevNetXrplClient2
   .generateWallet(FAUCET_WALLET_SECRET)
   .then(logMessageAndPass('Created Client2 wallet on NFT-Devnet'));
 
-Promise.all([mintTokenFromClient1, generateWalletForClient2])
+export const mintNftAndCreateBidProcedure = Promise.all([
+  mintTokenFromClient1,
+  generateWalletForClient2,
+])
   .then(() => nftDevNetXrplClient2.listNftBuyOffers(tokenId))
   .then(logMessageAndPass('Listed buy offers for the NFT'))
   .then(() =>
     nftDevNetXrplClient2.createNftBuyOffer({
-      amount: 22,
+      amount: RANDOM_XRP_VALUE,
       tokenId,
       owner: nftDevNetXrplClient1.wallet()?.address!,
     })
   )
-  .then(logMessageAndPass('Created buy offer for NFT'))
+  .then(
+    logMessageAndPass(`Created buy offer for NFT for ${RANDOM_XRP_VALUE} XRP`)
+  )
   .then(() => nftDevNetXrplClient2.listNftBuyOffers(tokenId))
-  .then(logMessageAndPass('Listed buy offers for the NFT'));
+  .then(logMessageAndPass('Listed new buy offers for the NFT'));
