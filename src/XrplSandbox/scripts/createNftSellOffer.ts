@@ -8,9 +8,10 @@ import { mintTransferableNftProcedure } from './mintTransferableNft';
  * Faucet generated wallet credentials.
  */
 
+const RANDOM_XRP_VALUE = Math.round(Math.random() * 100);
 let tokenId: string;
 
-mintTransferableNftProcedure
+export const mintNftAndCreateSellOfferProcedure = mintTransferableNftProcedure
   .then((baseResponse: any) => baseResponse.result.account_nfts)
   .then(logMessageAndPass('See specific NFTs on wallet'))
   .then((nfts: NFT[]) => {
@@ -20,7 +21,14 @@ mintTransferableNftProcedure
   .then(logMessageAndPass('Selected first NFT'))
   .then(nftDevNetXrplClient1.listNftSellOffers)
   .then(logMessageAndPass('Listed sell offers for the NFT'))
-  .then(() => nftDevNetXrplClient1.createNftSellOffer({ amount: 22, tokenId }))
-  .then(logMessageAndPass('Created sell offer for NFT'))
+  .then(() =>
+    nftDevNetXrplClient1.createNftSellOffer({
+      amount: RANDOM_XRP_VALUE,
+      tokenId,
+    })
+  )
+  .then(
+    logMessageAndPass(`Created sell offer for NFT for ${RANDOM_XRP_VALUE} XRP`)
+  )
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
-  .then(logMessageAndPass('Listed sell offers for the NFT'));
+  .then(logMessageAndPass('Listed new sell offers for the NFT'));
