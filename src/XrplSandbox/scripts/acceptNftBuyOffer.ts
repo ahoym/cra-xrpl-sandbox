@@ -11,9 +11,7 @@ import { mintNftAndCreateBidProcedure } from './createNftBuyOffer';
  */
 
 /**
- * Be sure to change FAUCET_WALLET_SECRETs in the following scripts:
- * - ./mintTransferableNft.ts
- * - ./createNftBuyOffer.ts
+ * Be sure to change FAUCET_WALLET_SECRETs in the scripts/CONFIG.ts
  */
 mintNftAndCreateBidProcedure
   .then((response: any) =>

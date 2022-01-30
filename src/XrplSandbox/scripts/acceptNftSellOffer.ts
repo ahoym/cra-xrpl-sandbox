@@ -2,6 +2,7 @@ import { NFTOffer } from 'xrpl/dist/npm/models/common';
 import { logMessageAndPass } from '../../utilities';
 import { nftDevNetXrplClient1, nftDevNetXrplClient2 } from '../createClients';
 import { NFT } from '../types';
+import { CLIENT_TWO_FAUCET_WALLET_SECRET } from './CONFIG';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
 /**
@@ -24,16 +25,8 @@ const selectNftToSell = mintTransferableNftProcedure
   })
   .then(logMessageAndPass('Selected first NFT from Client1 wallet'));
 
-/**
- * See @link to get credentials from the NFT-Devnet XRP faucet.
- * > Generate NFT-Devnet credentials > Copy "Secret" > Use as FAUCET_WALLET_SECRET
- *
- * {@link https://xrpl.org/xrp-testnet-faucet.html}
- */
-const FAUCET_WALLET_SECRET = 'go-to-@link-above';
-
 const generateWalletForClient2 = nftDevNetXrplClient2
-  .generateWallet(FAUCET_WALLET_SECRET)
+  .generateWallet(CLIENT_TWO_FAUCET_WALLET_SECRET)
   .then(logMessageAndPass('Created Client2 wallet on NFT-Devnet'));
 
 Promise.all([selectNftToSell, generateWalletForClient2])
