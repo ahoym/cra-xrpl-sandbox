@@ -3,6 +3,8 @@ import { nftDevNetXrplClient1 } from '../createClients';
 import { NFT } from '../types';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
+console.log('🪙 Starting createNftSellOffer script 🪙');
+
 /**
  * See ./mintTransferableNft.ts on how to instantiate a sandbox client from
  * Faucet generated wallet credentials.
@@ -31,4 +33,5 @@ export const mintNftAndCreateSellOfferProcedure = mintTransferableNftProcedure
     logMessageAndPass(`Created sell offer for NFT for ${RANDOM_XRP_VALUE} XRP`)
   )
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
-  .then(logMessageAndPass('Listed new sell offers for the NFT'));
+  .then(logMessageAndPass('Listed new sell offers for the NFT'))
+  .finally(() => console.log('🪙  Finished the createNftSellOffer script 🪙'));

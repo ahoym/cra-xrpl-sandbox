@@ -4,6 +4,8 @@ import { NFT } from '../types';
 import { CLIENT_TWO_FAUCET_WALLET_SECRET } from './CONFIG';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
+console.log('🪙 Starting createNftBuyOffer script 🪙');
+
 const RANDOM_XRP_VALUE = Math.round(Math.random() * 100);
 let tokenId: string;
 
@@ -37,4 +39,5 @@ export const mintNftAndCreateBidProcedure = Promise.all([
     logMessageAndPass(`Created buy offer for NFT for ${RANDOM_XRP_VALUE} XRP`)
   )
   .then(() => nftDevNetXrplClient2.listNftBuyOffers(tokenId))
-  .then(logMessageAndPass('Listed new buy offers for the NFT'));
+  .then(logMessageAndPass('Listed new buy offers for the NFT'))
+  .then(() => console.log('🪙 Finished the createNftBuyOffer script 🪙'));

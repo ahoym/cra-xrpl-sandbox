@@ -5,6 +5,8 @@ import { NFT } from '../types';
 import { CLIENT_TWO_FAUCET_WALLET_SECRET } from './CONFIG';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
+console.log('🪙 Starting acceptNftSellOffer script 🪙');
+
 /**
  * Use case:
  * - Someone (Client1) who mints a NFT wants to sell it specifically to someone else (Client2)
@@ -58,4 +60,5 @@ Promise.all([selectNftToSell, generateWalletForClient2])
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
   .then(logMessageAndPass('Listed sell offers for the NFT (should be 0)'))
   .then(() => nftDevNetXrplClient2.viewOwnNfts())
-  .then(logMessageAndPass('List NFTs on the Client2 wallet account response'));
+  .then(logMessageAndPass('List NFTs on the Client2 wallet account response'))
+  .finally(() => console.log('🪙 Finished the acceptNftSellOffer script 🪙'));

@@ -2,6 +2,8 @@ import { logMessageAndPass } from '../../utilities';
 import { nftDevNetXrplClient1 } from '../createClients';
 import { mintNftAndCreateSellOfferProcedure } from './createNftSellOffer';
 
+console.log('🪙 Starting cancelNftSellOffer script 🪙');
+
 let tokenId: string;
 
 mintNftAndCreateSellOfferProcedure
@@ -15,4 +17,5 @@ mintNftAndCreateSellOfferProcedure
   })
   .then(logMessageAndPass('Cancel first NFT Sell Offer'))
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
-  .then(logMessageAndPass('Listed new sell offers for the NFT'));
+  .then(logMessageAndPass('Listed new sell offers for the NFT'))
+  .finally(() => console.log('🪙 Finished the cancelNftSellOffer script 🪙'));
