@@ -2,6 +2,22 @@ import { NFTokenAcceptOffer, NFTokenCancelOffer, TxResponse } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { StateRefProvider } from '../types';
 
+export const listNftBuyOffers = async (
+  stateRefProvider: StateRefProvider,
+  tokenId: string
+) => {
+  const { client } = await stateRefProvider();
+
+  try {
+    return await client.request({
+      command: 'nft_buy_offers',
+      tokenid: tokenId,
+    });
+  } catch (error: unknown) {
+    return [];
+  }
+};
+
 /**
  * {@link https://xrpl.org/nftokencanceloffer.html}
  * @param tokenOfferIndices array of NFT offer `index`es
