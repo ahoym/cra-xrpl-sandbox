@@ -16,6 +16,7 @@ import {
   createNftSellOffer,
   listNftBuyOffers,
   listNftSellOffers,
+  viewOwnNfts,
 } from './NFTokens/nftClient';
 
 export class XrplClient {
@@ -119,14 +120,7 @@ export class XrplClient {
     return this.#client.submitAndWait(nfTokenMintTxPayload, { wallet });
   };
 
-  public viewOwnNfts = async () => {
-    const wallet = await this.connectAndGetWallet();
-
-    return this.#client.request({
-      command: 'account_nfts',
-      account: wallet.address,
-    });
-  };
+  public viewOwnNfts = viewOwnNfts.bind(null, this.stateRefProvider);
 
   public burnNft = burnNft.bind(this, this.stateRefProvider);
 
