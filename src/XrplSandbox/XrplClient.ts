@@ -2,21 +2,18 @@ import {
   Client,
   ClientOptions,
   NFTokenBurn,
-  NFTokenCreateOffer,
-  NFTokenCreateOfferFlags,
   NFTokenMint,
   NFTokenMintFlags,
   TxResponse,
   Wallet,
   xrpToDrops,
 } from 'xrpl';
-import { Amount } from 'xrpl/dist/npm/models/common';
-import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from './constants';
 import {
   acceptNftBuyOffer,
   acceptNftSellOffer,
   cancelNftOffers,
   createNftBuyOffer,
+  createNftSellOffer,
   listNftBuyOffers,
   listNftSellOffers,
 } from './NFTokens/nftClient';
@@ -145,50 +142,10 @@ export class XrplClient {
     return this.#client.submitAndWait(burnNftTxPayload, { wallet });
   };
 
-  /**
-   * Note that this transaction type is used for both BUY and SELLs.
-   * The differentiators are the various properties of the payload.
-   *
-   * SELL requires:
-   * - Flag.tfSellToken to be set
-   *
-   * {@link https://xrpl.org/nftokencreateoffer.html}
-   */
-  public createNftSellOffer = async ({
-    amount,
-    tokenId,
-    destination,
-    expirationISOString,
-  }: {
-    amount: Amount | number;
-    tokenId: string;
-    destination?: string;
-    expirationISOString?: string;
-  }): Promise<TxResponse> => {
-    const wallet = await this.connectAndGetWallet();
-    const nfTokenCreateSellOfferPayload: NFTokenCreateOffer = {
-      TransactionType: 'NFTokenCreateOffer',
-      Account: wallet.address,
-      Amount: typeof amount === 'number' ? xrpToDrops(amount) : amount,
-      TokenID: tokenId,
-      Flags: NFTokenCreateOfferFlags.tfSellToken,
-    };
-
-    if (destination) {
-      nfTokenCreateSellOfferPayload.Destination = destination;
-    }
-    if (expirationISOString) {
-      const dateTimeInMs = new Date(expirationISOString).getTime();
-      const differenceInMs = dateTimeInMs - RIPPLE_EPOCH_IN_MS;
-      nfTokenCreateSellOfferPayload.Expiration = Math.floor(
-        differenceInMs / MS_IN_S
-      );
-    }
-
-    return this.#client.submitAndWait(nfTokenCreateSellOfferPayload, {
-      wallet,
-    });
-  };
+  public createNftSellOffer = createNftSellOffer.bind(
+    null,
+    this.stateRefProvider
+  );
 
   public createNftBuyOffer = createNftBuyOffer.bind(
     null,
