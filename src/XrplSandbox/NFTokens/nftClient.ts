@@ -1,6 +1,53 @@
-import { NFTokenAcceptOffer, NFTokenCancelOffer, TxResponse } from 'xrpl';
+import {
+  NFTokenAcceptOffer,
+  NFTokenCancelOffer,
+  NFTokenCreateOffer,
+  TxResponse,
+  xrpToDrops,
+} from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { StateRefProvider } from '../types';
+
+/**
+ * Note that this transaction type is used for both BUY and SELLs.
+ * The differentiators are the various properties of the payload.
+ *
+ * BUY requires:
+ * - Owner of the NFT to be defined
+ * - No Flag.tfSellToken to be set
+ *
+ * {@link https://xrpl.org/nftokencreateoffer.html}
+ */
+export const createNftBuyOffer = async (
+  stateRefProvider: StateRefProvider,
+  {
+    amount,
+    owner,
+    tokenId,
+    destination,
+  }: {
+    amount: Amount | number;
+    owner: string;
+    tokenId: string;
+    destination?: string;
+  }
+): Promise<TxResponse> => {
+  const { client, wallet } = await stateRefProvider();
+  const nfTokenCreateBuyOfferPayload: NFTokenCreateOffer = {
+    TransactionType: 'NFTokenCreateOffer',
+    Account: wallet.address,
+    Amount: typeof amount === 'number' ? xrpToDrops(amount) : amount,
+    Owner: owner,
+    TokenID: tokenId,
+  };
+
+  // [To-Clarify] Is this field needed for buy offers?
+  if (destination) {
+    nfTokenCreateBuyOfferPayload.Destination = destination;
+  }
+
+  return client.submitAndWait(nfTokenCreateBuyOfferPayload, { wallet });
+};
 
 export const listNftBuyOffers = async (
   stateRefProvider: StateRefProvider,
