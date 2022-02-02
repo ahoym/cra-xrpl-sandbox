@@ -76,39 +76,33 @@ export class XrplClient {
     return this.#client.submitAndWait(signed.tx_blob);
   };
 
+  /**
+   * NFT related methods
+   */
   public mintTransferableNft = mintTransferableNft.bind(
     null,
     this.stateRefProvider
   );
-
   public viewOwnNfts = viewOwnNfts.bind(null, this.stateRefProvider);
-
   public burnNft = burnNft.bind(this, this.stateRefProvider);
-
   public createNftSellOffer = createNftSellOffer.bind(
     null,
     this.stateRefProvider
   );
-
   public createNftBuyOffer = createNftBuyOffer.bind(
     null,
     this.stateRefProvider
   );
-
   public listNftSellOffers = listNftSellOffers.bind(
     null,
     this.stateRefProvider
   );
-
   public listNftBuyOffers = listNftBuyOffers.bind(null, this.stateRefProvider);
-
   public cancelNftOffers = cancelNftOffers.bind(null, this.stateRefProvider);
-
   public acceptNftSellOffer = acceptNftSellOffer.bind(
     null,
     this.stateRefProvider
   );
-
   public acceptNftBuyOffer = acceptNftBuyOffer.bind(
     null,
     this.stateRefProvider
