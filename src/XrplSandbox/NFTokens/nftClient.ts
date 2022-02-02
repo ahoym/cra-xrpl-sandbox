@@ -12,6 +12,18 @@ import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from '../constants';
 import { StateRefProvider } from '../types';
 
 /**
+ * View all NFTs associated to stateRefProvider().wallet
+ */
+export const viewOwnNfts = async (stateRefProvider: StateRefProvider) => {
+  const { client, wallet } = await stateRefProvider();
+
+  return client.request({
+    command: 'account_nfts',
+    account: wallet.address,
+  });
+};
+
+/**
  * {@link https://xrpl.org/nftokenburn.html}
  */
 export const burnNft = async (
