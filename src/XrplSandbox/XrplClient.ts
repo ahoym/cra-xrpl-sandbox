@@ -28,6 +28,11 @@ export class XrplClient {
   public client = () => this.#client;
   public wallet = () => this.#wallet;
 
+  private stateRefProvider = async () => {
+    const wallet = await this.connectAndGetWallet();
+    return { client: this.#client, wallet };
+  };
+
   private connect = (): Promise<void> => {
     if (this.#client.isConnected()) {
       return Promise.resolve();
