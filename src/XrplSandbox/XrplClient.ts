@@ -1,7 +1,6 @@
 import {
   Client,
   ClientOptions,
-  NFTokenBurn,
   NFTokenMint,
   NFTokenMintFlags,
   TxResponse,
@@ -11,6 +10,7 @@ import {
 import {
   acceptNftBuyOffer,
   acceptNftSellOffer,
+  burnNft,
   cancelNftOffers,
   createNftBuyOffer,
   createNftSellOffer,
@@ -128,19 +128,7 @@ export class XrplClient {
     });
   };
 
-  /**
-   * {@link https://xrpl.org/nftokenburn.html}
-   */
-  public burnNft = async (tokenId: string): Promise<TxResponse> => {
-    const wallet = await this.connectAndGetWallet();
-    const burnNftTxPayload: NFTokenBurn = {
-      TransactionType: 'NFTokenBurn',
-      Account: wallet.address,
-      TokenID: tokenId,
-    };
-
-    return this.#client.submitAndWait(burnNftTxPayload, { wallet });
-  };
+  public burnNft = burnNft.bind(this, this.stateRefProvider);
 
   public createNftSellOffer = createNftSellOffer.bind(
     null,
