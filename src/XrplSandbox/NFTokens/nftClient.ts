@@ -1,6 +1,24 @@
-import { NFTokenAcceptOffer, TxResponse } from 'xrpl';
+import { NFTokenAcceptOffer, NFTokenCancelOffer, TxResponse } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { StateRefProvider } from '../types';
+
+/**
+ * {@link https://xrpl.org/nftokencanceloffer.html}
+ * @param tokenOfferIndices array of NFT offer `index`es
+ */
+export const cancelNftOffers = async (
+  stateRefProvider: StateRefProvider,
+  tokenOfferIndices: string[]
+) => {
+  const { client, wallet } = await stateRefProvider();
+  const cancelNftOffersPayload: NFTokenCancelOffer = {
+    TransactionType: 'NFTokenCancelOffer',
+    Account: wallet.address,
+    TokenOffers: tokenOfferIndices,
+  };
+
+  return client.submitAndWait(cancelNftOffersPayload, { wallet });
+};
 
 /**
  * For cases where a buyer can accept a sell offer from a NFT owner.

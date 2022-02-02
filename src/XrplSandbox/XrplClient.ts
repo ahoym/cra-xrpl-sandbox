@@ -2,7 +2,6 @@ import {
   Client,
   ClientOptions,
   NFTokenBurn,
-  NFTokenCancelOffer,
   NFTokenCreateOffer,
   NFTokenCreateOfferFlags,
   NFTokenMint,
@@ -13,7 +12,11 @@ import {
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from './constants';
-import { acceptNftBuyOffer, acceptNftSellOffer } from './NFTokens/nftClient';
+import {
+  acceptNftBuyOffer,
+  acceptNftSellOffer,
+  cancelNftOffers,
+} from './NFTokens/nftClient';
 
 export class XrplClient {
   #client: Client;
@@ -244,20 +247,7 @@ export class XrplClient {
     }
   };
 
-  /**
-   * {@link https://xrpl.org/nftokencanceloffer.html}
-   * @param tokenOfferIndices array of NFT offer `index`es
-   */
-  public cancelNftOffers = async (tokenOfferIndices: string[]) => {
-    const wallet = await this.connectAndGetWallet();
-    const cancelNftOffersPayload: NFTokenCancelOffer = {
-      TransactionType: 'NFTokenCancelOffer',
-      Account: wallet.address,
-      TokenOffers: tokenOfferIndices,
-    };
-
-    return this.#client.submitAndWait(cancelNftOffersPayload, { wallet });
-  };
+  public cancelNftOffers = cancelNftOffers.bind(null, this.stateRefProvider);
 
   public acceptNftSellOffer = acceptNftSellOffer.bind(
     null,
