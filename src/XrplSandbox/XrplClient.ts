@@ -16,6 +16,7 @@ import {
   acceptNftBuyOffer,
   acceptNftSellOffer,
   cancelNftOffers,
+  listNftBuyOffers,
 } from './NFTokens/nftClient';
 
 export class XrplClient {
@@ -236,16 +237,7 @@ export class XrplClient {
     return this.#client.submitAndWait(nfTokenCreateBuyOfferPayload, { wallet });
   };
 
-  public listNftBuyOffers = async (tokenId: string) => {
-    try {
-      return await this.#client.request({
-        command: 'nft_buy_offers',
-        tokenid: tokenId,
-      });
-    } catch (error: unknown) {
-      return [];
-    }
-  };
+  public listNftBuyOffers = listNftBuyOffers.bind(null, this.stateRefProvider);
 
   public cancelNftOffers = cancelNftOffers.bind(null, this.stateRefProvider);
 
