@@ -4,12 +4,54 @@ import {
   NFTokenCancelOffer,
   NFTokenCreateOffer,
   NFTokenCreateOfferFlags,
+  NFTokenMint,
+  NFTokenMintFlags,
   TxResponse,
   xrpToDrops,
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from '../constants';
 import { StateRefProvider } from '../types';
+
+/**
+ * Specifically mint a transferable NFT
+ * {@link https://xrpl.org/nftokenmint.html}
+ */
+export const mintTransferableNft = async (
+  stateRefProvider: StateRefProvider,
+  {
+    transferFee,
+    URI,
+  }: {
+    transferFee?: number;
+    URI?: string;
+  } = {}
+): Promise<TxResponse> => {
+  const { client, wallet } = await stateRefProvider();
+  const nfTokenMintTxPayload: NFTokenMint = {
+    TransactionType: 'NFTokenMint',
+    Account: wallet.address,
+    Flags: NFTokenMintFlags.tfTransferable,
+    TokenTaxon: 0, // [To-Clarify] What is the practical use case of the TokenTaxon?
+    /**
+     * Issuer field also requires the AccountRoot to have the `MintAccount` field set to wallet.address.
+     * This can be set through the {@link https://xrpl.org/accountset.html} AccountSet Tx.
+     */
+    // Issuer:     // [To-Clarify] What is the practical use case of having an Issuer account?
+  };
+
+  if (URI) {
+    nfTokenMintTxPayload.URI = URI;
+  }
+  // Throw an error instead if desired. See NFTokenMint transaction in jsdoc to see TransferFee constraints.
+  const isValidTransferFee =
+    !!transferFee && transferFee >= 0 && transferFee <= 9999;
+  if (isValidTransferFee) {
+    nfTokenMintTxPayload.TransferFee = transferFee;
+  }
+
+  return client.submitAndWait(nfTokenMintTxPayload, { wallet });
+};
 
 /**
  * View all NFTs associated to stateRefProvider().wallet
