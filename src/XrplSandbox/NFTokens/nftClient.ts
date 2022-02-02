@@ -49,6 +49,22 @@ export const createNftBuyOffer = async (
   return client.submitAndWait(nfTokenCreateBuyOfferPayload, { wallet });
 };
 
+export const listNftSellOffers = async (
+  stateRefProvider: StateRefProvider,
+  tokenId: string
+) => {
+  const { client } = await stateRefProvider();
+
+  try {
+    return await client.request({
+      command: 'nft_sell_offers',
+      tokenid: tokenId,
+    });
+  } catch (error: unknown) {
+    return [];
+  }
+};
+
 export const listNftBuyOffers = async (
   stateRefProvider: StateRefProvider,
   tokenId: string
