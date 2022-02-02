@@ -14,6 +14,7 @@ import {
 } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from './constants';
+import { acceptNftBuyOffer } from './NFTokens/nftClient';
 
 export class XrplClient {
   #client: Client;
@@ -281,24 +282,8 @@ export class XrplClient {
     return this.#client.submitAndWait(acceptNftSellOfferPayload, { wallet });
   };
 
-  /**
-   * {@link https://xrpl.org/nftokenacceptoffer.html}
-   */
-  public acceptNftBuyOffer = async (
-    offerIndex: string,
-    brokerFee?: Amount
-  ): Promise<TxResponse> => {
-    const wallet = await this.connectAndGetWallet();
-    const acceptNftBuyOfferPayload: NFTokenAcceptOffer = {
-      TransactionType: 'NFTokenAcceptOffer',
-      Account: wallet.address,
-      BuyOffer: offerIndex,
-    };
-
-    if (brokerFee) {
-      acceptNftBuyOfferPayload.BrokerFee = brokerFee;
-    }
-
-    return this.#client.submitAndWait(acceptNftBuyOfferPayload, { wallet });
-  };
+  public acceptNftBuyOffer = acceptNftBuyOffer.bind(
+    null,
+    this.stateRefProvider
+  );
 }
