@@ -1,12 +1,4 @@
-import {
-  Client,
-  ClientOptions,
-  NFTokenMint,
-  NFTokenMintFlags,
-  TxResponse,
-  Wallet,
-  xrpToDrops,
-} from 'xrpl';
+import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
 import {
   acceptNftBuyOffer,
   acceptNftSellOffer,
@@ -16,6 +8,7 @@ import {
   createNftSellOffer,
   listNftBuyOffers,
   listNftSellOffers,
+  mintTransferableNft,
   viewOwnNfts,
 } from './NFTokens/nftClient';
 
@@ -83,42 +76,10 @@ export class XrplClient {
     return this.#client.submitAndWait(signed.tx_blob);
   };
 
-  /**
-   * Specifically mint a transferable NFT
-   * {@link https://xrpl.org/nftokenmint.html}
-   */
-  public mintTransferableNft = async ({
-    transferFee,
-    URI,
-  }: {
-    transferFee?: number;
-    URI?: string;
-  } = {}): Promise<TxResponse> => {
-    const wallet = await this.connectAndGetWallet();
-    const nfTokenMintTxPayload: NFTokenMint = {
-      TransactionType: 'NFTokenMint',
-      Account: wallet.address,
-      Flags: NFTokenMintFlags.tfTransferable,
-      TokenTaxon: 0, // [To-Clarify] What is the practical use case of the TokenTaxon?
-      /**
-       * Issuer field also requires the AccountRoot to have the `MintAccount` field set to wallet.address.
-       * This can be set through the {@link https://xrpl.org/accountset.html} AccountSet Tx.
-       */
-      // Issuer:     // [To-Clarify] What is the practical use case of having an Issuer account?
-    };
-
-    if (URI) {
-      nfTokenMintTxPayload.URI = URI;
-    }
-    // Throw an error instead if desired. See NFTokenMint transaction in jsdoc to see TransferFee constraints.
-    const isValidTransferFee =
-      !!transferFee && transferFee >= 0 && transferFee <= 9999;
-    if (isValidTransferFee) {
-      nfTokenMintTxPayload.TransferFee = transferFee;
-    }
-
-    return this.#client.submitAndWait(nfTokenMintTxPayload, { wallet });
-  };
+  public mintTransferableNft = mintTransferableNft.bind(
+    null,
+    this.stateRefProvider
+  );
 
   public viewOwnNfts = viewOwnNfts.bind(null, this.stateRefProvider);
 
