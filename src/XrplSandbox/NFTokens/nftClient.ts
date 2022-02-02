@@ -1,5 +1,6 @@
 import {
   NFTokenAcceptOffer,
+  NFTokenBurn,
   NFTokenCancelOffer,
   NFTokenCreateOffer,
   NFTokenCreateOfferFlags,
@@ -9,6 +10,23 @@ import {
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { MS_IN_S, RIPPLE_EPOCH_IN_MS } from '../constants';
 import { StateRefProvider } from '../types';
+
+/**
+ * {@link https://xrpl.org/nftokenburn.html}
+ */
+export const burnNft = async (
+  stateRefProvider: StateRefProvider,
+  tokenId: string
+): Promise<TxResponse> => {
+  const { client, wallet } = await stateRefProvider();
+  const burnNftTxPayload: NFTokenBurn = {
+    TransactionType: 'NFTokenBurn',
+    Account: wallet.address,
+    TokenID: tokenId,
+  };
+
+  return client.submitAndWait(burnNftTxPayload, { wallet });
+};
 
 /**
  * Note that this transaction type is used for both BUY and SELLs.
