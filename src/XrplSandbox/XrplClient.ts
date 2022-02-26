@@ -11,6 +11,7 @@ import {
   mintTransferableNft,
   viewOwnNfts,
 } from './NFTokens/nftClient';
+import { cancelOffer, createOffer } from './Offers/offersClient';
 
 export class XrplClient {
   #client: Client;
@@ -107,4 +108,10 @@ export class XrplClient {
     null,
     this.stateRefProvider
   );
+
+  /**
+   * Offer related methods
+   */
+  public createOffer = createOffer.bind(null, this.stateRefProvider);
+  public cancelOffer = cancelOffer.bind(null, this.stateRefProvider);
 }
