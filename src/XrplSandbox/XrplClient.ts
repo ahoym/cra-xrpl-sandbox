@@ -18,6 +18,11 @@ import {
   viewOwnNfts,
 } from './NFTokens/nftClient';
 import { cancelOffer, createOffer } from './Offers/offersClient';
+import {
+  claimPaymentChannel,
+  createPaymentChannel,
+  fundPaymentChannel,
+} from './PaymentChannels/paymentChannelClient';
 
 export class XrplClient {
   #client: Client;
@@ -134,4 +139,20 @@ export class XrplClient {
    */
   public createOffer = createOffer.bind(null, this.stateRefProvider);
   public cancelOffer = cancelOffer.bind(null, this.stateRefProvider);
+
+  /**
+   * PaymentChannel related methods
+   */
+  public createPaymentChannel = createPaymentChannel.bind(
+    null,
+    this.stateRefProvider
+  );
+  public fundPaymentChannel = fundPaymentChannel.bind(
+    null,
+    this.stateRefProvider
+  );
+  public claimPaymentChannel = claimPaymentChannel.bind(
+    null,
+    this.stateRefProvider
+  );
 }
