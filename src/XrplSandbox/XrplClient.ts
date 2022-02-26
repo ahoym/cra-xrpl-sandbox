@@ -1,4 +1,5 @@
 import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
+import { deleteAccount, setAccount } from './Account/accountClient';
 import { cancelCheck, cashCheck, createCheck } from './Checks/checksClient';
 import {
   cancelEscrow,
@@ -87,6 +88,12 @@ export class XrplClient {
 
     return this.#client.submitAndWait(signed.tx_blob);
   };
+
+  /**
+   * Account related methods
+   */
+  public setAccount = setAccount.bind(null, this.stateRefProvider);
+  public deleteAccount = deleteAccount.bind(null, this.stateRefProvider);
 
   /**
    * Check related methods
