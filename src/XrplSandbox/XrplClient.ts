@@ -1,5 +1,12 @@
 import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
 import { deleteAccount, setAccount } from './Account/accountClient';
+import {
+  createTicket,
+  depositPreAuth,
+  setRegularKey,
+  setSignerList,
+  setTrust,
+} from './Attic/miscClient';
 import { cancelCheck, cashCheck, createCheck } from './Checks/checksClient';
 import {
   cancelEscrow,
@@ -162,4 +169,13 @@ export class XrplClient {
     null,
     this.stateRefProvider
   );
+
+  /**
+   * Miscellaneous methods
+   */
+  public setSignerList = setSignerList.bind(null, this.stateRefProvider);
+  public createTicket = createTicket.bind(null, this.stateRefProvider);
+  public setTrust = setTrust.bind(null, this.stateRefProvider);
+  public setRegularKey = setRegularKey.bind(null, this.stateRefProvider);
+  public depositPreAuth = depositPreAuth.bind(null, this.stateRefProvider);
 }
