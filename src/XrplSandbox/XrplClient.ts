@@ -1,4 +1,5 @@
 import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
+import { cancelCheck, cashCheck, createCheck } from './Checks/checksClient';
 import {
   cancelEscrow,
   createEscrow,
@@ -81,6 +82,13 @@ export class XrplClient {
 
     return this.#client.submitAndWait(signed.tx_blob);
   };
+
+  /**
+   * Check related methods
+   */
+  public createCheck = createCheck.bind(null, this.stateRefProvider);
+  public cancelCheck = cancelCheck.bind(null, this.stateRefProvider);
+  public cashCheck = cashCheck.bind(null, this.stateRefProvider);
 
   /**
    * Escrow related methods
