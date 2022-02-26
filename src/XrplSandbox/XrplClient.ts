@@ -1,5 +1,10 @@
 import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
 import {
+  cancelEscrow,
+  createEscrow,
+  finishEscrow,
+} from './Escrows/escrowsClient';
+import {
   acceptNftBuyOffer,
   acceptNftSellOffer,
   burnNft,
@@ -76,6 +81,13 @@ export class XrplClient {
 
     return this.#client.submitAndWait(signed.tx_blob);
   };
+
+  /**
+   * Escrow related methods
+   */
+  public createEscrow = createEscrow.bind(null, this.stateRefProvider);
+  public finishEscrow = finishEscrow.bind(null, this.stateRefProvider);
+  public cancelEscrow = cancelEscrow.bind(null, this.stateRefProvider);
 
   /**
    * NFT related methods
