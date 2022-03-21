@@ -57,6 +57,9 @@ export const XrplClientsProvider = ({ children }: { children: ReactNode }) => {
   const clearClientsAndSetEnvironment = useCallback(
     (environment: Environment) => {
       setEnvironment(environment);
+      // For most use cases, devs probably wont be swapping between networks.
+      // If this becomes more of a thing, add an export function or retain
+      // clients per env in state.
       setXrplClients(DEFAULT_CONTEXT_PROPS.xrplClients);
     },
     [setXrplClients]
