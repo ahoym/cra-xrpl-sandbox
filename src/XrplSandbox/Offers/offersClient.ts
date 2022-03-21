@@ -13,12 +13,12 @@ export const createOffer = async (
   }
 ) => {
   const { client, wallet } = await stateRefProvider();
-  const offerCreateTxPayload: OfferCreate = {
+  const offerCreateTxPayload: OfferCreate = await client.autofill({
     TransactionType: 'OfferCreate',
     Account: wallet.address,
     TakerGets: takerGets,
     TakerPays: takerPays,
-  };
+  });
   const signed = wallet.sign(offerCreateTxPayload);
 
   return client.submitAndWait(signed.tx_blob);
@@ -33,11 +33,11 @@ export const cancelOffer = async (
   }
 ) => {
   const { client, wallet } = await stateRefProvider();
-  const offerCreateTxPayload: OfferCancel = {
+  const offerCreateTxPayload: OfferCancel = await client.autofill({
     TransactionType: 'OfferCancel',
     Account: wallet.address,
     OfferSequence: offerSequence,
-  };
+  });
   const signed = wallet.sign(offerCreateTxPayload);
 
   return client.submitAndWait(signed.tx_blob);
