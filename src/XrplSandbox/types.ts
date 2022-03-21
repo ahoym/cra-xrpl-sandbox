@@ -20,3 +20,9 @@ export interface StateRefs {
  * Allows for functions to be agnostic of where wallet and client data comes from.
  */
 export type StateRefProvider = () => Promise<StateRefs>;
+
+export enum Environment {
+  TEST_NET = 'TEST_NET',
+  DEV_NET = 'DEV_NET',
+  NFT_DEV_NET = 'NFT_DEV_NET',
+}
