@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
+import { XrplClientsProvider } from './contexts/XrplClientsContext';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <XrplClientsProvider>
+      <App />
+    </XrplClientsProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
