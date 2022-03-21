@@ -28,4 +28,7 @@ export const deleteAccount = async (
     Account: wallet.address,
     Destination: destination,
   };
+  const signed = wallet.sign(deleteAccountTxPayload);
+
+  return client.submitAndWait(signed.tx_blob);
 };
