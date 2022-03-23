@@ -42,7 +42,17 @@ export const XrplClientsProvider = ({ children }: { children: ReactNode }) => {
 
   const setAllXrplClients = useCallback(
     (address: string, client: XrplClient) => {
-      setXrplClients((state) => ({ ...state, [address]: client }));
+      setXrplClients((state) => {
+        // Hacky but allows devs to play with the clients directly in the web console.
+        const clientName = `xrplClient${Object.keys(state).length + 1}`;
+        (window as any)[clientName] = client;
+        console.log(
+          `Setting window.${clientName} to this client holding address`,
+          address
+        );
+
+        return { ...state, [address]: client };
+      });
     },
     [setXrplClients]
   );
