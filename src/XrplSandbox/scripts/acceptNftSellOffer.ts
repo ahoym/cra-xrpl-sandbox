@@ -50,15 +50,28 @@ Promise.all([selectNftToSell, generateWalletForClient2])
   )
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
   .then(logMessageAndPass('Listed new sell offers for the NFT'))
+  // Use case_1
   .then((listSellOffersResponse) => {
-    const cheapestSellOffer = listSellOffersResponse.result.offers.reduce(
-      (prev: NFTOffer, curr: NFTOffer) =>
-        Number(prev.amount) < Number(curr.amount) ? prev : curr
+    const specificSellOffer = listSellOffersResponse.result.offers.find(
+      (offer: NFTOffer) =>
+        offer.destination === nftDevNetXrplClient2.wallet()?.address
     );
     tokenId = listSellOffersResponse.result.nft_id;
-    return cheapestSellOffer;
+    return specificSellOffer;
   })
-  .then(logMessageAndPass('Selected cheapest NFT Sell Offer'))
+  .then(logMessageAndPass('Selected NFT Sell Offer specified for NFT Wallet 2'))
+  /**
+   // Use case_2
+   .then((listSellOffersResponse) => {
+     const cheapestSellOffer = listSellOffersResponse.result.offers.reduce(
+       (prev: NFTOffer, curr: NFTOffer) =>
+         Number(prev.amount) < Number(curr.amount) ? prev : curr
+     );
+     tokenId = listSellOffersResponse.result.nft_id;
+     return cheapestSellOffer;
+   })
+   .then(logMessageAndPass('Selected cheapest NFT Sell Offer'))
+   */
   .then((offer: NFTOffer) =>
     nftDevNetXrplClient2.acceptNftSellOffer(offer.nft_offer_index)
   )
