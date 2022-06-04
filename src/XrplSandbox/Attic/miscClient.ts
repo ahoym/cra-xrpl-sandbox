@@ -5,7 +5,7 @@ import {
   TicketCreate,
   TrustSet,
 } from 'xrpl';
-import { Amount, SignerEntry } from 'xrpl/dist/npm/models/common';
+import { IssuedCurrencyAmount, SignerEntry } from 'xrpl/dist/npm/models/common';
 import { StateRefProvider } from '../types';
 
 export const setSignerList = async (
@@ -44,7 +44,7 @@ export const createTicket = async (
 
 export const setTrust = async (
   stateRefProvider: StateRefProvider,
-  { limitAmount }: { limitAmount: Amount }
+  { limitAmount }: { limitAmount: IssuedCurrencyAmount }
 ) => {
   const { client, wallet } = await stateRefProvider();
   const setTrustTxPayload: TrustSet = {

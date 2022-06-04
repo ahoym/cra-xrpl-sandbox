@@ -17,7 +17,9 @@ console.log('🪙 Starting acceptNftBuyOffer script 🪙');
  */
 mintNftAndCreateBidProcedure
   .then((response: any) =>
-    nftDevNetXrplClient1.acceptNftBuyOffer(response.result.offers[0].index)
+    nftDevNetXrplClient1.acceptNftBuyOffer(
+      response.result.offers[0].nft_offer_index
+    )
   )
   .then(logMessageAndPass('Client1 accepted NFT Buy Offer'))
   .then(nftDevNetXrplClient1.viewOwnNfts)

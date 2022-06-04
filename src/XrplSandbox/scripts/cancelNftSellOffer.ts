@@ -8,14 +8,16 @@ let tokenId: string;
 
 mintNftAndCreateSellOfferProcedure
   .then((listSellOffersResponse) => {
-    tokenId = listSellOffersResponse.result.tokenid;
+    tokenId = listSellOffersResponse.result.nft_id;
     return listSellOffersResponse.result.offers[0];
   })
   .then(logMessageAndPass('Selected first NFT Sell Offer'))
   .then((firstNftOffer) => {
-    return nftDevNetXrplClient1.cancelNftOffers([firstNftOffer.index]);
+    return nftDevNetXrplClient1.cancelNftOffers([
+      firstNftOffer.nft_offer_index,
+    ]);
   })
-  .then(logMessageAndPass('Cancel first NFT Sell Offer'))
+  .then(logMessageAndPass('Canceled first NFT Sell Offer'))
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
   .then(logMessageAndPass('Listed new sell offers for the NFT'))
   .finally(() => console.log('🪙 Finished the cancelNftSellOffer script 🪙'));

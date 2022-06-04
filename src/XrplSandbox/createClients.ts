@@ -1,4 +1,5 @@
 import {
+  DEV_NET,
   DEV_NET_EXPLORER,
   NFT_DEV_NET,
   NFT_DEV_NET_EXPLORER,
@@ -24,6 +25,16 @@ export function generateTestnetXrplClient() {
 }
 
 /**
+ * Does not require manually generated credentials from the XRP Faucet.
+ * The XrplClient can automagically generate them.
+ *
+ * @returns XrplClient wrapper around the xrpl.Client
+ */
+export function generateDevNetXrplClient() {
+  return new XrplClient(DEV_NET);
+}
+
+/**
  * See @link to get credentials from the NFT-Devnet XRP faucet.
  * > Generate NFT-Devnet credentials > Copy "Secret" > nftDevNetXrplClient1.generateWallet("Secret");
  *
@@ -36,6 +47,9 @@ export function generateNftDevnetXrplClient() {
 
 export const xrplClient1 = generateTestnetXrplClient();
 export const xrplClient2 = generateTestnetXrplClient();
+
+export const xrplDevNetClient1 = generateDevNetXrplClient();
+export const xrplDevNetClient2 = generateDevNetXrplClient();
 
 export const nftDevNetXrplClient1 = generateNftDevnetXrplClient();
 export const nftDevNetXrplClient2 = generateNftDevnetXrplClient();

@@ -17,8 +17,8 @@ export const mintNftAndCreateSellOfferProcedure = mintTransferableNftProcedure
   .then((baseResponse: any) => baseResponse.result.account_nfts)
   .then(logMessageAndPass('See specific NFTs on wallet'))
   .then((nfts: NFT[]) => {
-    tokenId = nfts[0].TokenID;
-    return nfts[0].TokenID;
+    tokenId = nfts[0].NFTokenID;
+    return nfts[0].NFTokenID;
   })
   .then(logMessageAndPass('Selected first NFT'))
   .then(nftDevNetXrplClient1.listNftSellOffers)

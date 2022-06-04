@@ -4,8 +4,8 @@ import { Client, NFTokenMintFlags, Wallet } from 'xrpl';
 export interface NFT {
   Flags: NFTokenMintFlags;
   Issuer: string;
-  TokenID: string;
-  TokenTaxon: number;
+  NFTokenID: string;
+  NFTokenTaxon: number;
   nft_serial: number;
 }
 

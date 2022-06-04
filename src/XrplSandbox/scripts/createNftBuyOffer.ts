@@ -13,8 +13,8 @@ const mintTokenFromClient1 = mintTransferableNftProcedure
   .then((baseResponse: any) => baseResponse.result.account_nfts)
   .then(logMessageAndPass('See specific NFTs on the Client1 wallet'))
   .then((nfts: NFT[]) => {
-    tokenId = nfts[0].TokenID;
-    return nfts[0].TokenID;
+    tokenId = nfts[0].NFTokenID;
+    return nfts[0].NFTokenID;
   })
   .then(logMessageAndPass('Selected first NFT from Client1 wallet'))
   .then(() => nftDevNetXrplClient1.listNftBuyOffers(tokenId))
@@ -40,4 +40,4 @@ export const mintNftAndCreateBidProcedure = Promise.all([
   )
   .then(() => nftDevNetXrplClient2.listNftBuyOffers(tokenId))
   .then(logMessageAndPass('Listed new buy offers for the NFT'))
-  .then(() => console.log('🪙 Finished the createNftBuyOffer script 🪙'));
+  .finally(() => console.log('🪙 Finished the createNftBuyOffer script 🪙'));

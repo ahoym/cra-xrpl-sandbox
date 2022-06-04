@@ -8,11 +8,17 @@ import { mintTransferableNftProcedure } from './mintTransferableNft';
 console.log('🪙 Starting acceptNftSellOffer script 🪙');
 
 /**
- * Use case:
+ * Use case_1:
  * - Someone (Client1) who mints a NFT wants to sell it specifically to someone else (Client2)
  * - Client1 creates a NFT sell offer with the destination of Client2.address
  * - Client2 accepts the NFT sell offer
  * - Client2 receives the NFT
+ *
+ * Use case_2:
+ * - Someone (Client1) who mints a NFT wants to sell it to anyone
+ * - Client1 creates a NFT sell offer with no destination
+ * - Client2 (or any client) can accept the NFT sell offer
+ * - Client2 (or any client) receives the NFT
  */
 
 const RANDOM_XRP_VALUE = Math.round(Math.random() * 100);
@@ -22,8 +28,8 @@ const selectNftToSell = mintTransferableNftProcedure
   .then((baseResponse: any) => baseResponse.result.account_nfts)
   .then(logMessageAndPass('See specific NFTs on the Client1 wallet'))
   .then((nfts: NFT[]) => {
-    tokenId = nfts[0].TokenID;
-    return nfts[0].TokenID;
+    tokenId = nfts[0].NFTokenID;
+    return nfts[0].NFTokenID;
   })
   .then(logMessageAndPass('Selected first NFT from Client1 wallet'));
 
@@ -45,16 +51,16 @@ Promise.all([selectNftToSell, generateWalletForClient2])
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
   .then(logMessageAndPass('Listed new sell offers for the NFT'))
   .then((listSellOffersResponse) => {
-    const offer = listSellOffersResponse.result.offers.find(
-      (offer: NFTOffer) =>
-        offer.destination === nftDevNetXrplClient2.wallet()?.address!
+    const cheapestSellOffer = listSellOffersResponse.result.offers.reduce(
+      (prev: NFTOffer, curr: NFTOffer) =>
+        Number(prev.amount) < Number(curr.amount) ? prev : curr
     );
-    tokenId = listSellOffersResponse.result.tokenid;
-    return offer;
+    tokenId = listSellOffersResponse.result.nft_id;
+    return cheapestSellOffer;
   })
-  .then(logMessageAndPass('Selected first NFT Sell Offer'))
+  .then(logMessageAndPass('Selected cheapest NFT Sell Offer'))
   .then((offer: NFTOffer) =>
-    nftDevNetXrplClient2.acceptNftSellOffer(offer.index)
+    nftDevNetXrplClient2.acceptNftSellOffer(offer.nft_offer_index)
   )
   .then(logMessageAndPass('Client2 accepted sell offer from Client1 for NFT'))
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))

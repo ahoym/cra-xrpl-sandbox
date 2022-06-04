@@ -12,7 +12,11 @@ console.log('🪙 Starting burnNft script 🪙');
 mintTransferableNftProcedure
   .then((baseResponse: any) => baseResponse.result.account_nfts)
   .then(logMessageAndPass('See specific NFTs on wallet'))
-  .then((nfts: NFT[]) => nfts[0].TokenID)
+  .then((nfts: NFT[]) => {
+    console.log('asdf', nfts[0]);
+
+    return nfts[0].NFTokenID;
+  })
   .then(logMessageAndPass('Selecting first NFT and burning it'))
   .then(nftDevNetXrplClient1.burnNft)
   .then(logMessageAndPass('NFT burnt!'))
