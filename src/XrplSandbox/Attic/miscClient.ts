@@ -47,11 +47,11 @@ export const setTrust = async (
   { limitAmount }: { limitAmount: IssuedCurrencyAmount }
 ) => {
   const { client, wallet } = await stateRefProvider();
-  const setTrustTxPayload: TrustSet = {
+  const setTrustTxPayload: TrustSet = await client.autofill({
     TransactionType: 'TrustSet',
     Account: wallet.address,
     LimitAmount: limitAmount,
-  };
+  });
   const signed = wallet.sign(setTrustTxPayload);
 
   return client.submitAndWait(signed.tx_blob);
