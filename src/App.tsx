@@ -7,6 +7,8 @@ import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 
 // Can import and run TS scripts this way if so desired
 // import './XrplSandbox/scripts/sendXrp';
+
+// NFT Related
 // import './XrplSandbox/scripts/mintTransferableNft';
 // import './XrplSandbox/scripts/burnNft';
 // import './XrplSandbox/scripts/createNftSellOffer';
@@ -14,7 +16,9 @@ import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 // import './XrplSandbox/scripts/cancelNftSellOffer';
 // import './XrplSandbox/scripts/cancelNftBuyOffer';
 // import './XrplSandbox/scripts/acceptNftSellOffer';
-// import './XrplSandbox/scripts/acceptNftBuyOffer';
+
+// DEX Related
+// import './XrplSandbox/scripts/issueCurrency';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient1.generateWallet();
