@@ -1,4 +1,12 @@
-import { Client, ClientOptions, TxResponse, Wallet, xrpToDrops } from 'xrpl';
+import {
+  Client,
+  ClientOptions,
+  Payment,
+  TxResponse,
+  Wallet,
+  xrpToDrops,
+} from 'xrpl';
+import { Amount } from 'xrpl/dist/npm/models/common';
 import { deleteAccount, setAccount } from './Account/accountClient';
 import {
   createTicket,
@@ -81,14 +89,16 @@ export class XrplClient {
   };
 
   public sendPayment = async (
-    xrpAmount: number,
+    amount: number | Amount,
     destinationAddress: string
   ): Promise<TxResponse> => {
+    console.log('amount', amount, typeof amount);
+
     const wallet = await this.connectAndGetWallet();
-    const preparedPayment = await this.#client.autofill({
+    const preparedPayment: Payment = await this.#client.autofill({
       TransactionType: 'Payment',
       Account: wallet.address,
-      Amount: xrpToDrops(xrpAmount),
+      Amount: typeof amount === 'number' ? xrpToDrops(amount) : amount,
       Destination: destinationAddress,
     });
     const signed = wallet.sign(preparedPayment);
