@@ -1,23 +1,29 @@
-import { OfferCancel, OfferCreate } from 'xrpl';
+import { OfferCancel, OfferCreate, xrpToDrops } from 'xrpl';
 import { Amount } from 'xrpl/dist/npm/models/common';
 import { StateRefProvider } from '../types';
 
 export const createOffer = async (
   stateRefProvider: StateRefProvider,
   {
-    takerGets,
-    takerPays,
-  }: {
-    takerGets: Amount;
-    takerPays: Amount;
-  }
+    TakerGets,
+    TakerPays,
+    ...rest
+  }:
+    | OfferCreate
+    | {
+        TakerGets: number | Amount;
+        TakerPays: number | Amount;
+      }
 ) => {
   const { client, wallet } = await stateRefProvider();
   const offerCreateTxPayload: OfferCreate = await client.autofill({
+    ...rest,
     TransactionType: 'OfferCreate',
     Account: wallet.address,
-    TakerGets: takerGets,
-    TakerPays: takerPays,
+    TakerGets:
+      typeof TakerGets === 'number' ? xrpToDrops(TakerGets) : TakerGets,
+    TakerPays:
+      typeof TakerPays === 'number' ? xrpToDrops(TakerPays) : TakerPays,
   });
   const signed = wallet.sign(offerCreateTxPayload);
 
