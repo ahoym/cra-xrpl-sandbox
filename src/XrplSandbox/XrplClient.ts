@@ -92,8 +92,6 @@ export class XrplClient {
     amount: number | Amount,
     destinationAddress: string
   ): Promise<TxResponse> => {
-    console.log('amount', amount, typeof amount);
-
     const wallet = await this.connectAndGetWallet();
     const preparedPayment: Payment = await this.#client.autofill({
       TransactionType: 'Payment',
