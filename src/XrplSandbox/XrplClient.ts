@@ -77,6 +77,8 @@ export class XrplClient {
   public generateWallet = async (fromSeed?: string): Promise<Wallet> => {
     await this.connect();
 
+    if (this.#wallet) return this.#wallet;
+
     if (fromSeed) {
       this.#wallet = Wallet.fromSeed(fromSeed);
     } else {
