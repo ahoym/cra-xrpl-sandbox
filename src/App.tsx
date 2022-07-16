@@ -19,6 +19,7 @@ import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 
 // DEX Related
 // import './XrplSandbox/scripts/issueCurrency';
+// import './XrplSandbox/scripts/createOffer';
 
 // Generate testnet wallets
 const generateWalletRequestOne = xrplClient1.generateWallet();
