@@ -1,4 +1,3 @@
-import { logMessageAndPass } from '../../utilities';
 import { TEST_NET_EXPLORER } from '../constants';
 import { xrplClient1, xrplClient2 } from '../createClients';
 import {
@@ -22,12 +21,10 @@ export const createCurrencyOfferFromReceiver =
         TakerPays: 10,
       })
     )
-    .then(
-      logMessageAndPass(
-        `Created offer from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}`
-      )
-    )
     .then((response: any) => {
+      console.log(
+        `Created offer from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}`
+      );
       console.log(
         `See TestNet explorer: ${TEST_NET_EXPLORER}accounts/${response.result.Account}`
       );
@@ -40,7 +37,7 @@ export const createCurrencyOfferFromIssuer =
     .then(() =>
       xrplClient1.createOffer({
         // amount to buy
-        TakerGets: 10,
+        TakerGets: 10, // XRP
         // amount to sell
         TakerPays: {
           currency: ISSUED_CURENCY_TOKEN,
@@ -49,12 +46,10 @@ export const createCurrencyOfferFromIssuer =
         },
       })
     )
-    .then(
-      logMessageAndPass(
-        `Created offer from Issuer for Issued Currency ${ISSUED_CURENCY_TOKEN}`
-      )
-    )
     .then((response: any) => {
+      console.log(
+        `Created offer from Issuer for Issued Currency ${ISSUED_CURENCY_TOKEN}`
+      );
       console.log(
         `See TestNet explorer: ${TEST_NET_EXPLORER}accounts/${response.result.Account}`
       );
