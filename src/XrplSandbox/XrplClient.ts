@@ -43,6 +43,7 @@ import {
 export class XrplClient {
   #client: Client;
   #wallet: Wallet | null;
+  #walletPromise: Promise<{ wallet: Wallet; balance: number }> | null = null;
 
   constructor(server: string, options?: ClientOptions) {
     this.#client = new Client(server, options);
@@ -83,8 +84,16 @@ export class XrplClient {
       this.#wallet = Wallet.fromSeed(fromSeed);
     } else {
       // Instantiate a wallet, only for test and devnets. Currently doesn't seem to work for NFT-Devnet.
-      const fundResult = await this.#client.fundWallet();
-      this.#wallet = fundResult.wallet;
+      const promise = this.#walletPromise
+        ? this.#walletPromise
+        : this.#client.fundWallet();
+
+      if (!this.#walletPromise) {
+        this.#walletPromise = promise;
+      }
+
+      const result = await promise;
+      this.#wallet = result.wallet;
     }
 
     return this.#wallet;
