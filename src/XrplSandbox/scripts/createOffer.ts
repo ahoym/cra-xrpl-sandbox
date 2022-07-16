@@ -59,6 +59,9 @@ export const createCurrencyOfferFromIssuer =
         `See TestNet explorer: ${TEST_NET_EXPLORER}accounts/${response.result.Account}`
       );
       return response;
-    });
+    })
+    .finally(() =>
+      console.log('========🪙 Finished Place order(s) script 🪙========')
+    );
 
 // TODO: make a 3rd account, Trustline to issuer, and place corresponding offers contra receiver

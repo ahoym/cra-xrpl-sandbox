@@ -1,5 +1,6 @@
 import { logMessageAndPass } from '../../utilities';
 import { xrplClient1, xrplClient2 } from '../createClients';
+import { generateWallet } from './generateWallet';
 
 console.log('========💰 Starting sendXrpPayment script 💰========');
 
@@ -9,12 +10,12 @@ console.log('========💰 Starting sendXrpPayment script 💰========');
  */
 
 // Generate testnet wallets
-const generateWalletRequestOne = xrplClient1
-  .generateWallet()
-  .then(logMessageAndPass('Created faucet wallet for Client 1'));
-const generateWalletRequestTwo = xrplClient2
-  .generateWallet()
-  .then(logMessageAndPass('Created faucet wallet for Client 2'));
+const generateWalletRequestOne = generateWallet(xrplClient1, {
+  clientDescription: 'Client1',
+});
+const generateWalletRequestTwo = generateWallet(xrplClient2, {
+  clientDescription: 'Client2',
+});
 
 // After testnet wallet creations, send a 22 XRP payment
 Promise.all([generateWalletRequestOne, generateWalletRequestTwo])

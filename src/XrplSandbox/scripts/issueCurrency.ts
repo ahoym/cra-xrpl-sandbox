@@ -73,4 +73,7 @@ export const issueCurrencyAndSetupTrustlineProcedure = Promise.all([
     logMessageAndPass(
       `Sent Issued Currency ${ISSUED_CURENCY_TOKEN} to Receiver`
     )
+  )
+  .finally(() =>
+    console.log('========🪙 Finished Issue Currency script 🪙========')
   );

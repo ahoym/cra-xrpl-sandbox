@@ -3,6 +3,7 @@ import { logMessageAndPass } from '../../utilities';
 import { nftDevNetXrplClient1, nftDevNetXrplClient2 } from '../createClients';
 import { NFT } from '../types';
 import { CLIENT_TWO_FAUCET_WALLET_SECRET } from './CONFIG';
+import { generateWallet } from './generateWallet';
 import { mintTransferableNftProcedure } from './mintTransferableNft';
 
 console.log('🪙 Starting acceptNftSellOffer script 🪙');
@@ -33,9 +34,10 @@ const selectNftToSell = mintTransferableNftProcedure
   })
   .then(logMessageAndPass('Selected first NFT from Client1 wallet'));
 
-const generateWalletForClient2 = nftDevNetXrplClient2
-  .generateWallet(CLIENT_TWO_FAUCET_WALLET_SECRET)
-  .then(logMessageAndPass('Created Client2 wallet on NFT-Devnet'));
+const generateWalletForClient2 = generateWallet(nftDevNetXrplClient2, {
+  clientDescription: 'NFT-Devnet Client2',
+  fromSeed: CLIENT_TWO_FAUCET_WALLET_SECRET,
+});
 
 Promise.all([selectNftToSell, generateWalletForClient2])
   .then(() =>

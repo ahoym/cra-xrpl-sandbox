@@ -12,11 +12,9 @@ mintNftAndCreateSellOfferProcedure
     return listSellOffersResponse.result.offers[0];
   })
   .then(logMessageAndPass('Selected first NFT Sell Offer'))
-  .then((firstNftOffer) => {
-    return nftDevNetXrplClient1.cancelNftOffers([
-      firstNftOffer.nft_offer_index,
-    ]);
-  })
+  .then((firstNftOffer) =>
+    nftDevNetXrplClient1.cancelNftOffers([firstNftOffer.nft_offer_index])
+  )
   .then(logMessageAndPass('Canceled first NFT Sell Offer'))
   .then(() => nftDevNetXrplClient1.listNftSellOffers(tokenId))
   .then(logMessageAndPass('Listed new sell offers for the NFT'))
