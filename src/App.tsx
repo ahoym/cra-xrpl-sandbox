@@ -6,7 +6,7 @@ import { XrplClientsList } from './components/XrplClientsList';
 import { xrplClient1, xrplClient2 } from './XrplSandbox/createClients';
 
 // Can import and run TS scripts this way if so desired
-// import './XrplSandbox/scripts/sendXrp';
+// import './XrplSandbox/scripts/sendXrpPayment';
 
 // NFT Related
 // import './XrplSandbox/scripts/mintTransferableNft';
