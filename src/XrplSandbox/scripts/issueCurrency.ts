@@ -4,7 +4,7 @@ import { xrplClient1, xrplClient2 } from '../createClients';
 
 console.log('========🪙 Issue Currency script 🪙========');
 
-const ISSUED_CURENCY_TOKEN = 'PLZ';
+export const ISSUED_CURENCY_TOKEN = 'PLZ';
 const ISSUED_CURENCY_TOKEN_AMOUNT = '10000';
 
 const generateWalletRequestOne = xrplClient1 // Issuer
@@ -33,7 +33,10 @@ const createTrustSetForReceiverProcedure = generateWalletRequestOne
   )
   .then(logMessageAndPass('Created Trustline between Issuer and Receiver'));
 
-Promise.all([setRipplingForIssuerProcedure, createTrustSetForReceiverProcedure])
+export const issueCurrencyAndSetupTrustlineProcedure = Promise.all([
+  setRipplingForIssuerProcedure,
+  createTrustSetForReceiverProcedure,
+])
   .then(() =>
     xrplClient1.sendPayment(
       {
