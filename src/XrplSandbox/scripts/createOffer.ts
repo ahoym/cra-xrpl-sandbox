@@ -1,5 +1,5 @@
 import { logMessageAndPass } from '../../utilities';
-import { generateTestnetXrplClient, xrplClient1 } from '../createClients';
+import { generateTestnetXrplClient } from '../createClients';
 import {
   createTrustSetForReceiver,
   issueCurrencyAndSetupTrustlineProcedure,
@@ -11,18 +11,28 @@ console.log('========🪙 Place order(s) script 🪙========');
 export const createCurrencyOfferFromReceiver =
   issueCurrencyAndSetupTrustlineProcedure
     .then(([issuerClient, receiverClient]) =>
-      receiverClient.createOffer({
-        TakerGets: {
-          currency: ISSUED_CURENCY_TOKEN,
-          issuer: issuerClient.wallet()!.address,
-          value: '200',
-        },
-        TakerPays: 10,
-      })
+      Promise.all([
+        receiverClient.createOffer({
+          TakerGets: {
+            currency: ISSUED_CURENCY_TOKEN,
+            issuer: issuerClient.wallet()!.address,
+            value: '300',
+          },
+          TakerPays: 30,
+        }),
+        receiverClient.createOffer({
+          TakerGets: {
+            currency: ISSUED_CURENCY_TOKEN,
+            issuer: issuerClient.wallet()!.address,
+            value: '100',
+          },
+          TakerPays: 10,
+        }),
+      ])
     )
     .then((response: any) => {
       console.log(
-        `Created offer from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}. From Client 2.`
+        `Created offers from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}. From Client 2.`
       );
       return response;
     });
@@ -30,12 +40,12 @@ export const createCurrencyOfferFromReceiver =
 // place an order (or many orders) from receiver
 export const createCurrencyOfferFromIssuer =
   issueCurrencyAndSetupTrustlineProcedure
-    .then(() =>
-      xrplClient1.createOffer({
+    .then(([issuerClient]) =>
+      issuerClient.createOffer({
         TakerGets: 10, // XRP
         TakerPays: {
           currency: ISSUED_CURENCY_TOKEN,
-          issuer: xrplClient1.wallet()!.address,
+          issuer: issuerClient.wallet()!.address,
           value: '100',
         },
       })
@@ -64,7 +74,7 @@ issueCurrencyAndSetupTrustlineProcedure
   .then(logMessageAndPass('For 3rd Client'))
   .then(([issuerClient, receiverClient]) =>
     receiverClient.createOffer({
-      TakerGets: 10, // XRP
+      TakerGets: 20, // XRP
       TakerPays: {
         currency: ISSUED_CURENCY_TOKEN,
         issuer: issuerClient.wallet()!.address,
