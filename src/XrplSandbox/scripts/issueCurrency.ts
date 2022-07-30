@@ -11,6 +11,7 @@ const ISSUED_CURENCY_TOKEN_AMOUNT = '10000';
 
 const setRipplingForIssuerProcedure = generateWallet(xrplClient1, {
   clientDescription: 'Issuer',
+  fromSeed: '',
 })
   .then(() =>
     xrplClient1.setAccount({ SetFlag: AccountSetAsfFlags.asfDefaultRipple })
@@ -55,7 +56,9 @@ export const issueCurrencyAndSetupTrustlineProcedure = Promise.all([
   setRipplingForIssuerProcedure,
   createTrustSetForReceiver({
     issuerClient: xrplClient1,
+    issuerClientSecret: '',
     receiverClient: xrplClient2,
+    receiverClientSecret: '',
   }),
 ])
   .then(async ([_, [issuerClient, receiverClient]]) => {
