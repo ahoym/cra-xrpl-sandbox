@@ -1,6 +1,7 @@
-import { TEST_NET_EXPLORER } from '../constants';
-import { xrplClient1, xrplClient2 } from '../createClients';
+import { logMessageAndPass } from '../../utilities';
+import { generateTestnetXrplClient, xrplClient1 } from '../createClients';
 import {
+  createTrustSetForReceiver,
   issueCurrencyAndSetupTrustlineProcedure,
   ISSUED_CURENCY_TOKEN,
 } from './issueCurrency';
@@ -9,24 +10,19 @@ console.log('========🪙 Place order(s) script 🪙========');
 
 export const createCurrencyOfferFromReceiver =
   issueCurrencyAndSetupTrustlineProcedure
-    .then(() =>
-      xrplClient2.createOffer({
-        // amount to sell
+    .then(([issuerClient, receiverClient]) =>
+      receiverClient.createOffer({
         TakerGets: {
           currency: ISSUED_CURENCY_TOKEN,
-          issuer: xrplClient1.wallet()!.address,
-          value: '100',
+          issuer: issuerClient.wallet()!.address,
+          value: '200',
         },
-        // amount to buy
         TakerPays: 10,
       })
     )
     .then((response: any) => {
       console.log(
-        `Created offer from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}`
-      );
-      console.log(
-        `See TestNet explorer: ${TEST_NET_EXPLORER}accounts/${response.result.Account}`
+        `Created offer from Receiver for Issued Currency ${ISSUED_CURENCY_TOKEN}. From Client 2.`
       );
       return response;
     });
@@ -36,9 +32,7 @@ export const createCurrencyOfferFromIssuer =
   issueCurrencyAndSetupTrustlineProcedure
     .then(() =>
       xrplClient1.createOffer({
-        // amount to buy
         TakerGets: 10, // XRP
-        // amount to sell
         TakerPays: {
           currency: ISSUED_CURENCY_TOKEN,
           issuer: xrplClient1.wallet()!.address,
@@ -50,13 +44,40 @@ export const createCurrencyOfferFromIssuer =
       console.log(
         `Created offer from Issuer for Issued Currency ${ISSUED_CURENCY_TOKEN}`
       );
-      console.log(
-        `See TestNet explorer: ${TEST_NET_EXPLORER}accounts/${response.result.Account}`
-      );
       return response;
     })
     .finally(() =>
       console.log('========🪙 Finished Place order(s) script 🪙========')
     );
 
-// TODO: make a 3rd account, Trustline to issuer, and place corresponding offers contra receiver
+const xrplClient3 = generateTestnetXrplClient();
+
+issueCurrencyAndSetupTrustlineProcedure
+  .then(logMessageAndPass('Attempting to create offer from Client 3'))
+  .then(() =>
+    createTrustSetForReceiver({
+      issuerClientSecret: 'saEiZU53bVZUHrdSkkWdPJ8nyYsbh',
+      receiverClient: xrplClient3,
+      receiverClientSecret: 'sptMxubjwmWCZTeeBwWz2rvEzgNgj',
+    })
+  )
+  .then(logMessageAndPass('For 3rd Client'))
+  .then(([issuerClient, receiverClient]) =>
+    receiverClient.createOffer({
+      TakerGets: 10, // XRP
+      TakerPays: {
+        currency: ISSUED_CURENCY_TOKEN,
+        issuer: issuerClient.wallet()!.address,
+        value: '200',
+      },
+    })
+  )
+  .then((response: any) => {
+    console.log(
+      `Created offer from Issuer for Issued Currency ${ISSUED_CURENCY_TOKEN}. From Client 3.`
+    );
+    return response;
+  })
+  .finally(() =>
+    console.log('========🪙 Finished Place order(s) script 🪙========')
+  );
