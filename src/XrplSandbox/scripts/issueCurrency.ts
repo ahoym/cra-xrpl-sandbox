@@ -9,15 +9,13 @@ console.log('========🪙 Issue Currency script 🪙========');
 export const ISSUED_CURENCY_TOKEN = 'PLZ';
 const ISSUED_CURENCY_TOKEN_AMOUNT = '10000';
 
-const generateWalletRequestOne = generateWallet(xrplClient1, {
+const setRipplingForIssuerProcedure = generateWallet(xrplClient1, {
   clientDescription: 'Issuer',
-});
-
-const setRipplingForIssuerProcedure = generateWalletRequestOne
+})
   .then(() =>
     xrplClient1.setAccount({ SetFlag: AccountSetAsfFlags.asfDefaultRipple })
   )
-  .then(logMessageAndPass('Set default rippling for client 1'));
+  .then(logMessageAndPass('Set default rippling for Issuer Client'));
 
 export function createTrustSetForReceiver({
   receiverClient,
@@ -56,19 +54,21 @@ export function createTrustSetForReceiver({
 export const issueCurrencyAndSetupTrustlineProcedure = Promise.all([
   setRipplingForIssuerProcedure,
   createTrustSetForReceiver({
+    issuerClient: xrplClient1,
     receiverClient: xrplClient2,
   }),
 ])
-  .then(([_, [issuerClient, receiverClient]]) =>
-    issuerClient.sendPayment(
+  .then(async ([_, [issuerClient, receiverClient]]) => {
+    await issuerClient.sendPayment(
       {
         currency: ISSUED_CURENCY_TOKEN,
         issuer: issuerClient.wallet()!.address,
-        value: '100',
+        value: '10000',
       },
       receiverClient.wallet()!.address
-    )
-  )
+    );
+    return [issuerClient, receiverClient];
+  })
   .then(
     logMessageAndPass(
       `Sent Issued Currency ${ISSUED_CURENCY_TOKEN} to Receiver`
