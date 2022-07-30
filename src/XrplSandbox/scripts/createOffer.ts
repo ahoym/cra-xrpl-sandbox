@@ -56,9 +56,7 @@ issueCurrencyAndSetupTrustlineProcedure
   .then(logMessageAndPass('Attempting to create offer from Client 3'))
   .then(() =>
     createTrustSetForReceiver({
-      issuerClientSecret: 'saEiZU53bVZUHrdSkkWdPJ8nyYsbh',
       receiverClient: xrplClient3,
-      receiverClientSecret: 'sptMxubjwmWCZTeeBwWz2rvEzgNgj',
     })
   )
   .then(logMessageAndPass('For 3rd Client'))
