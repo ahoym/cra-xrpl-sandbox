@@ -37,7 +37,6 @@ export const createCurrencyOfferFromReceiver =
       return response;
     });
 
-// place an order (or many orders) from receiver
 export const createCurrencyOfferFromIssuer =
   issueCurrencyAndSetupTrustlineProcedure
     .then(([issuerClient]) =>
@@ -101,4 +100,8 @@ issueCurrencyAndSetupTrustlineProcedure
  *    - Ascertain whether a trust set is necessary for an account that isnt issued currencies (Client 3).
  *
  * - Disco more into offers, how one may be broken up given multiple buyers for a sell.
+ *
+ * - Disco offers using two issued currencies instead of XRP.
+ *
+ * - Disco "rippled" offers using XRP as the common conra asset.
  */
