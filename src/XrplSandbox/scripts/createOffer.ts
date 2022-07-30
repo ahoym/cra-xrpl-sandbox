@@ -91,3 +91,14 @@ issueCurrencyAndSetupTrustlineProcedure
   .finally(() =>
     console.log('========🪙 Finished Place order(s) script 🪙========')
   );
+
+/**
+ * TODO:
+ *
+ * - Move account set up (rippling @ issuer, trust set(s)) to a global function to execute first.
+ *    - Ascertain whether a trust set can be set once. Currently, multiple runs of this script
+ *      will set a trust set every single time.
+ *    - Ascertain whether a trust set is necessary for an account that isnt issued currencies (Client 3).
+ *
+ * - Disco more into offers, how one may be broken up given multiple buyers for a sell.
+ */
