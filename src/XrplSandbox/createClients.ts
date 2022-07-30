@@ -83,6 +83,9 @@ console.log(
   'For NFT-Devnet Credentials, see: ',
   'https://xrpl.org/xrp-testnet-faucet.html'
 );
+console.log(
+  'See the XRP Testnet and Devnet faucets here: https://xrpl.org/xrp-testnet-faucet.html'
+);
 
 console.log('🤖 💻 Happy sandboxing! 🖥️ 🤖');
 
