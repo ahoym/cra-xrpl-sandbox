@@ -150,7 +150,11 @@ export async function verifyCustomerTrustline([
   operationalClient,
   customerClient,
 ]: XrplClient[]) {
-  console.log('Verifying trustline from Customer to Issuer');
+  console.log(
+    `Verifying trustline from Customer ${
+      customerClient.wallet()!.address
+    } to Issuer`
+  );
 
   await operationalClient.sendPayment(
     {
@@ -160,7 +164,11 @@ export async function verifyCustomerTrustline([
     },
     customerClient.wallet()!.address
   );
-  console.log('Credited tokens from Operational Client to Customer');
+  console.log(
+    `Credited tokens from Operational Client to Customer ${
+      customerClient.wallet()!.address
+    }`
+  );
 
   await customerClient.sendPayment(
     {
@@ -170,12 +178,16 @@ export async function verifyCustomerTrustline([
     },
     issuingClient.wallet()!.address
   );
-  console.log('Redeemed tokens from Customer to Issuer');
+  console.log(
+    `Redeemed tokens from Customer ${
+      customerClient.wallet()!.address
+    } to Issuer`
+  );
 
   return [issuingClient, standbyClient, operationalClient, customerClient];
 }
 
-const triAddressSetupProcedure = setupTriAddressUnit();
+export const triAddressSetupProcedure = setupTriAddressUnit();
 
 // 4 Customer creates trust set to Issuer
 const customerToIssuingTrustlinePromise = createTrustSetForReceiver({
