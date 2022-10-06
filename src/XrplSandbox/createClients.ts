@@ -45,6 +45,19 @@ export function generateNftDevnetXrplClient() {
   return new XrplClient(NFT_DEV_NET);
 }
 
+export enum Network {
+  TEST_NET = 'TEST_NET',
+  DEV_NET = 'DEV_NET',
+}
+const NETWORK_MAP = {
+  [Network.DEV_NET]: DEV_NET,
+  [Network.TEST_NET]: TEST_NET,
+};
+
+export function generateXrplClient(network: Network = Network.TEST_NET) {
+  return new XrplClient(NETWORK_MAP[network]);
+}
+
 export const xrplClient1 = generateTestnetXrplClient();
 export const xrplClient2 = generateTestnetXrplClient();
 
