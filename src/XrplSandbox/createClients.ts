@@ -100,4 +100,6 @@ console.log('🤖 💻 Happy sandboxing! 🖥️ 🤖');
 (window as any).nftDevNetXrplClient1 = nftDevNetXrplClient1;
 (window as any).nftDevNetXrplClient2 = nftDevNetXrplClient2;
 
+(window as any).generateDevNetXrplClient = generateDevNetXrplClient;
+(window as any).generateTestnetXrplClient = generateTestnetXrplClient;
 (window as any).listExplorers = listExplorers;
