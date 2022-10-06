@@ -36,17 +36,23 @@ General flow:
 const xrplClient3 = generateTestnetXrplClient();
 (window as any).xrplClient3 = xrplClient3;
 
+// Testnet secrets from the faucet
+const CLIENT1_SECRET = '';
+const CLIENT2_SECRET = '';
+const CLIENT3_SECRET = '';
+const CLIENT4_SECRET = '';
+
 // 1a. Create Trust set from Standby address (warm) to Issuing Address (cold)
 const standbyToIssuingTrustlinePromise = createTrustSetForReceiver({
   issuerClient: xrplClient1,
-  issuerClientSecret: '',
+  issuerClientSecret: CLIENT1_SECRET,
   receiverClient: xrplClient2,
-  receiverClientSecret: '',
+  receiverClientSecret: CLIENT2_SECRET,
 });
 
 const setRipplingForIssuerProcedure = generateWallet(xrplClient1, {
   clientDescription: 'Issuer',
-  fromSeed: '',
+  fromSeed: CLIENT1_SECRET,
 })
   .then(() =>
     xrplClient1.setAccount({ SetFlag: AccountSetAsfFlags.asfDefaultRipple })
@@ -56,12 +62,12 @@ const setRipplingForIssuerProcedure = generateWallet(xrplClient1, {
 // 1b. Create Trust set from Operational address (hot) to Issuing Address (cold)
 const operationalToIssuingTrustlinePromise = createTrustSetForReceiver({
   issuerClient: xrplClient1,
-  issuerClientSecret: '',
+  issuerClientSecret: CLIENT1_SECRET,
   receiverClient: xrplClient3,
-  receiverClientSecret: '',
+  receiverClientSecret: CLIENT3_SECRET,
 });
 
-setRipplingForIssuerProcedure
+const triAddressSetupProcedure = setRipplingForIssuerProcedure
   .then(() =>
     Promise.all([
       standbyToIssuingTrustlinePromise,
@@ -128,4 +134,69 @@ setRipplingForIssuerProcedure
       `Sent ${ISSUED_CURENCY_TOKEN} from Standby client to Operational client`
     )
   );
-// 4. Credit tokens to participants
+
+const xrplClient4 = generateTestnetXrplClient();
+(window as any).xrplClient4 = xrplClient4;
+
+// 4 Customer creates trust set to Issuer
+const customerToIssuingTrustlinePromise = createTrustSetForReceiver({
+  issuerClient: xrplClient1,
+  issuerClientSecret: CLIENT1_SECRET,
+  receiverClient: xrplClient4,
+  receiverClientSecret: CLIENT4_SECRET,
+});
+
+triAddressSetupProcedure
+  .then(async ([issuingClient, standbyClient, operationalClient]) => {
+    const [, customerClient] = await customerToIssuingTrustlinePromise;
+    console.log(
+      `🤑 Customer client address ${customerClient.wallet()!.address}`
+    );
+    return [issuingClient, standbyClient, operationalClient, customerClient];
+  })
+  .then(
+    logMessageAndPass('Step 4. Create Trustline between Customer and Issuer')
+  )
+  // 5. Credit tokens from Operational client to Customer
+  .then(
+    async ([
+      issuingClient,
+      standbyClient,
+      operationalClient,
+      customerClient,
+    ]) => {
+      await operationalClient.sendPayment(
+        {
+          currency: ISSUED_CURENCY_TOKEN,
+          issuer: issuingClient.wallet()!.address,
+          value: '200',
+        },
+        customerClient.wallet()!.address
+      );
+      return [issuingClient, standbyClient, operationalClient, customerClient];
+    }
+  )
+  .then(
+    logMessageAndPass(
+      'Step 5. Credited tokens from Operational Client to Customer'
+    )
+  )
+  // 6. Redeem/"Burn" tokens by sending back to Issuing address
+  .then(
+    async ([
+      issuingClient,
+      standbyClient,
+      operationalClient,
+      customerClient,
+    ]) => {
+      await customerClient.sendPayment(
+        {
+          currency: ISSUED_CURENCY_TOKEN,
+          issuer: issuingClient.wallet()!.address,
+          value: '10',
+        },
+        issuingClient.wallet()!.address
+      );
+    }
+  )
+  .then(logMessageAndPass('Step 6. Redeem tokens from Customer to Issuer'));
