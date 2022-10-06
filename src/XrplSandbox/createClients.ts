@@ -95,6 +95,8 @@ console.log('🤖 💻 Happy sandboxing! 🖥️ 🤖');
  */
 (window as any).xrplClient1 = xrplClient1;
 (window as any).xrplClient2 = xrplClient2;
+(window as any).xrplDevNetClient1 = xrplDevNetClient1;
+(window as any).xrplDevNetClient2 = xrplDevNetClient2;
 (window as any).nftDevNetXrplClient1 = nftDevNetXrplClient1;
 (window as any).nftDevNetXrplClient2 = nftDevNetXrplClient2;
 
