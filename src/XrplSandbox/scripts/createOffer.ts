@@ -2,9 +2,9 @@ import { logMessageAndPass } from '../../utilities';
 import { generateTestnetXrplClient } from '../createClients';
 import {
   createTrustSetForReceiver,
-  issueCurrencyAndSetupTrustlineProcedure,
   ISSUED_CURENCY_TOKEN,
-} from './issueCurrency';
+} from './createTrustSetForReceiver';
+import { issueCurrencyAndSetupTrustlineProcedure } from './issueCurrency';
 
 console.log('========🪙 Place order(s) script 🪙========');
 
